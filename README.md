@@ -25,5 +25,6 @@ Privacy Mode allows you to utilize your HD Wallet’s Master Public Key to gener
 - If an order receives a payment too small to process, an email is sent to the customer with the remaining balance
 - No chance of payment collisions due to unique address per order
 
-### Do you want your favorite coin project to be supported? 
+Do you want your favorite coin project to be supported? 
+============
 Feel free to submit a pull request, or contact us to do it for you (for a small one time fee).
