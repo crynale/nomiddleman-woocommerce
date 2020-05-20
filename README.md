@@ -1,6 +1,6 @@
-# Nomiddleman Crypto Payments for Woocommerce [WordPress plugin](https://wordpress.org/plugins/nomiddleman-crypto-payments-for-woocommerce/) 
+# Mineyourbiz 0-fee Crypto Payments for Woocommerce - A WordPress plugin
 
-[Get it in the WordPress plugin repo](https://wordpress.org/plugins/nomiddleman-crypto-payments-for-woocommerce/)
+[Get the legacy 'NoMiddleMan' extension in the WordPress plugin repo *(in the future this will be replaced)*](https://wordpress.org/plugins/nomiddleman-crypto-payments-for-woocommerce/)
 
 Classic Mode
 ============
