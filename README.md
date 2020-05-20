@@ -1,4 +1,4 @@
-# Mineyourbiz 0-fee Crypto Payments for Woocommerce - A WordPress plugin
+# Mineyourbiz 0-Fee Crypto Payments for Woocommerce - A WordPress plugin
 
 [Get the legacy 'NoMiddleMan' extension in the WordPress plugin repo *(in the future this will be replaced)*](https://wordpress.org/plugins/nomiddleman-crypto-payments-for-woocommerce/)
 
@@ -24,3 +24,6 @@ Privacy Mode allows you to utilize your HD Wallet’s Master Public Key to gener
 - Unique cryptocurrency payment address for every order
 - If an order receives a payment too small to process, an email is sent to the customer with the remaining balance
 - No chance of payment collisions due to unique address per order
+
+### Do you want your favorite coin project to be supported? 
+Feel free to submit a pull request, or contact us to do it for you (for a small one time fee).
