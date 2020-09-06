@@ -308,7 +308,7 @@ class NMM_Blockchain {
 
 
 	public static function get_ada_address_transactions($address) {
-		$request = 'https://cardanoexplorer.com/api/addresses/summary/' . $address;
+		$request = 'https://explorer.cardano.org/api/addresses/summary/' . $address;
 		$response = wp_remote_get($request);
 
 		if (is_wp_error($response) || $response['response']['code'] !== 200) {
@@ -339,8 +339,8 @@ class NMM_Blockchain {
 			$outputs = $rawTransaction->ctbOutputs;
 
 			foreach ($outputs as $output) {
-				if ($output[0] === $address) {
-					$amount = $output[1]->getCoin;
+				if ($output->ctaAddress === $address) {
+					$amount = $output->ctaAmount->getCoin;
 					$transactions[] = new NMM_Transaction($amount,
 														  10000,
 														  $rawTransaction->ctbTimeIssued,
