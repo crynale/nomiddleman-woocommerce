@@ -169,10 +169,9 @@ class NMM_Gateway extends WC_Payment_Gateway {
             update_post_meta($order_id, 'crypto_type_id', $cryptoId);
             // get current price of crypto
 
-            $cryptoPerUsd = $this->get_crypto_value_in_usd($cryptoId, $crypto->get_update_interval());
-            
+
             // handle different woocommerce currencies and get the order total in USD
-            $curr = get_woocommerce_currency(); 
+            $curr = get_woocommerce_currency();
 
             $usdTotal = NMM_Exchange::get_order_total_in_usd($order->get_total(), $curr);            
             
@@ -183,18 +182,22 @@ class NMM_Gateway extends WC_Payment_Gateway {
             }
 
             $cryptoMarkup = $cryptoMarkupPercent / 100.0;            
-            $cryptoPriceRatio = 1.0 + $cryptoMarkup;            
-            $cryptoTotalPreMarkup = round($usdTotal / $cryptoPerUsd, $crypto->get_round_precision(), PHP_ROUND_HALF_UP);            
+            $cryptoPriceRatio = 1.0 + $cryptoMarkup;
+            if ($curr === 'ADA') {
+                $cryptoTotalPreMarkup = round($usdTotal, $crypto->get_round_precision());
+            } else {
+                $cryptoPerUsd = $this->get_crypto_value_in_usd($cryptoId, $crypto->get_update_interval());
+                $cryptoTotalPreMarkup = round($usdTotal / $cryptoPerUsd, $crypto->get_round_precision());
+            }
             $cryptoTotal = $cryptoTotalPreMarkup * $cryptoPriceRatio;
 
-            $dustAmount = apply_filters('nmm_dust_amount', 0.000000000000000000, $cryptoId, $cryptoPerUsd, $crypto->get_round_precision(), $usdTotal, $cryptoTotal);
-            //error_log('filter dust amount: ' . $dustAmount);
-            //error_log('cryptoTotal pre-dust: ' . $cryptoTotal);
+            $dust = random_int(1,49999) / 1000000;
+
+            $dustAmount = apply_filters('nmm_dust_amount', $dust, $cryptoId, $cryptoPerUsd, $crypto->get_round_precision(), $usdTotal, $cryptoTotal);
             $cryptoTotal += $dustAmount;
-            //error_log('cryptoTotal post-dust: ' . $cryptoTotal);
-            
             // format the crypto amount based on crypto
             $formattedCryptoTotal = NMM_Cryptocurrencies::get_price_string($cryptoId, $cryptoTotal);
+            NMM_Util::log(__FILE__,__LINE__,"Formatted crypto total: {$formattedCryptoTotal}");
 
             update_post_meta($order_id, 'crypto_amount', $formattedCryptoTotal);
 
@@ -426,6 +429,10 @@ class NMM_Gateway extends WC_Payment_Gateway {
     // this function hits all the crypto exchange APIs that the user selected, then averages them and returns a conversion rate for USD
     // if the user has selected no exchanges to fetch data from it instead takes the average from all of them
     private function get_crypto_value_in_usd($cryptoId, $updateInterval) {
+
+        $store_currency = get_woocommerce_currency();
+
+        NMM_Util::log(__FILE__,__LINE__,"Store currency is: {$store_currency} Crypto ID: {$cryptoId}");
 
         $prices = array();
         $reduxSettings = get_option(NMM_REDUX_ID);

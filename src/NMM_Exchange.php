@@ -3,9 +3,13 @@
 // Class that communicates with various exchanges via HTTP
 class NMM_Exchange {
 	// this function converts other WooCommerce currencies to USD because the crypto exchanges only have prices in USD
-    public static function get_order_total_in_usd($total, $fromCurr) {        
+    public static function get_order_total_in_usd($total, $fromCurr) {
 
-        if ($fromCurr === 'USD') {
+        $store_currency = get_woocommerce_currency();
+
+        NMM_Util::log(__FILE__,__LINE__,"Store currency is: {$store_currency}");
+
+        if ($fromCurr === 'USD' || $fromCurr === $store_currency) {
             return $total;
         }
 

@@ -16,6 +16,8 @@ class NMM_Payment {
 			$cryptoId = $record['cryptocurrency'];
 			$crypto = $cryptos[$cryptoId];
 
+			NMM_Util::log(__FILE__,__LINE__, '===========================================================================');
+
 			self::check_address_transactions_for_matching_payments($crypto, $address, $transactionLifetime);
 		}
 	}
@@ -38,7 +40,7 @@ class NMM_Payment {
 			return;
 		}
 		
-		NMM_Util::log(__FILE__, __LINE__, 'Transcations found for ' . $cryptoId . ' - ' . $address . ': ' . print_r($transactions, true));	
+		NMM_Util::log(__FILE__, __LINE__, 'Transactions found for ' . $cryptoId . ' - ' . $address . ': ' . print_r($transactions, true));
 
 
 		foreach ($transactions as $transaction) {
@@ -72,11 +74,18 @@ class NMM_Payment {
 
 			foreach ($paymentRecords as $record) {
 				$paymentAmount = $record['order_amount'];
-				$paymentAmountSmallestUnit = $paymentAmount * (10**$crypto->get_round_precision());				
-				
-				$autoPaymentPercent = apply_filters('nmm_autopay_percent', $nmmSettings->get_autopay_processing_percent($cryptoId), $paymentAmount, $cryptoId, $address);
+				$paymentAmountSmallestUnit = $paymentAmount * (10**$crypto->get_round_precision());
 
-				$percentDifference = abs($transactionAmount - $paymentAmountSmallestUnit) / $transactionAmount;
+                NMM_Util::log(__FILE__,__LINE__,"Payment Amount: {$paymentAmountSmallestUnit} Transaction Amount: {$transactionAmount}");
+
+
+                $autoPaymentPercent = apply_filters('nmm_autopay_percent', $nmmSettings->get_autopay_processing_percent($cryptoId), $paymentAmount, $cryptoId, $address);
+
+                $diff = round(abs($transactionAmount - $paymentAmountSmallestUnit), $crypto->get_round_precision());
+
+				$percentDifference = $diff / $transactionAmount;
+
+				NMM_Util::log(__FILE__,__LINE__, "Percent Difference: {$diff} {$percentDifference} {$autoPaymentPercent}");
 
 				if ($percentDifference <= (1 - $autoPaymentPercent)) {
 					$matchingPaymentRecords[] = $record;
@@ -84,6 +93,8 @@ class NMM_Payment {
 
 				NMM_Util::log(__FILE__, __LINE__, '---CryptoId, paymentAmount, paymentAmountSmallestUnit, transactionAmount, percentDifference:' . $cryptoId . ',' . $paymentAmount .',' . $paymentAmountSmallestUnit . ',' .  $transactionAmount . ',' .  $percentDifference);
 			}
+
+			NMM_Util::log(__FILE__,__LINE__, "How many matching payment records? ".count($matchingPaymentRecords));
 
 			// Transaction does not match any order payment
 			if (count($matchingPaymentRecords) == 0) {

@@ -308,8 +308,17 @@ class NMM_Blockchain {
 
 
 	public static function get_ada_address_transactions($address) {
-		$request = 'https://cardanoexplorer.com/api/addresses/summary/' . $address;
-		$response = wp_remote_get($request);
+
+	    $api_key = 'imIG7uSQKuW47lfzNt64SrgMWikcJXeG';
+
+	    $args = [
+            'headers'=> [
+                'project_id' => $api_key
+            ]
+        ];
+
+	    $request = 'https://cardano-mainnet.blockfrost.io/api/v0/addresses/'.$address.'/utxos?order=desc';
+		$response = wp_remote_get($request, $args);
 
 		if (is_wp_error($response) || $response['response']['code'] !== 200) {
 			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
@@ -323,30 +332,31 @@ class NMM_Blockchain {
 		}
 
 		$body = json_decode($response['body']);
+		if (empty($body)) {
+		    $result = [
+		        'result' => 'error',
+                'message' => 'No transactions found'
+            ];
+		    return $result;
+        }
 
-		$rawTransactions = $body->Right->caTxList;
-		if (!is_array($rawTransactions)) {
-			$result = array(
-				'result' => 'error',
-				'message' => 'No transactions found',
-			);
-
-			return $result;
-		}
 		$transactions = array();
 
-		foreach ($rawTransactions as $rawTransaction) {
-			$outputs = $rawTransaction->ctbOutputs;
+		foreach ($body as $rawTransaction) {
 
-			foreach ($outputs as $output) {
-				if ($output[0] === $address) {
-					$amount = $output[1]->getCoin;
-					$transactions[] = new NMM_Transaction($amount,
-														  10000,
-														  $rawTransaction->ctbTimeIssued,
-														  $rawTransaction->ctbId);
-				}				
-			}
+		    $amount = $rawTransaction->amount[0]->quantity;
+		    $block_request = 'https://cardano-mainnet.blockfrost.io/api/v0/blocks/'.$rawTransaction->block;
+		    $block_response = wp_remote_get($block_request, $args);
+		    if (is_wp_error($block_response) || $block_response['response']['code'] !== 200) {
+		        NMM_Util::log(__FILE__,__LINE__, 'FAILED API CALL ( '.$block_request.' ): '.print_r($block_response,true));
+		        continue;
+            }
+		    $block = json_decode($block_response['body']);
+		    if (empty($body)) {
+		        continue;
+            }
+
+		    $transactions[] = new NMM_Transaction($amount, 10000, $block->time, $rawTransaction->tx_hash);
 		}
 
 		$result = array (
