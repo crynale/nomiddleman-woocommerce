@@ -11,7 +11,8 @@ class NMM_Cryptocurrencies {
             'BTC' => new NMM_Cryptocurrency('BTC', 'Bitcoin', 8, 'bitcoin_logo_small.png', 60, '₿', true, true, true, ''),
             'LTC' => new NMM_Cryptocurrency('LTC', 'Litecoin', 8, 'litecoin_logo_small.png', 60, 'Ł', true, true, true, ''),
             'QTUM' => new NMM_Cryptocurrency('QTUM', 'Qtum', 8, 'qtum_logo_small.png', 60, '', true, false, true, ''),            
-            'DASH' => new NMM_Cryptocurrency('DASH', 'Dash', 8, 'dash_logo_small.png', 60, '', true, true, true, ''),            
+            'DASH' => new NMM_Cryptocurrency('DASH', 'Dash', 8, 'dash_logo_small.png', 60, '', true, true, true, ''),
+	    'HTH' => new NMM_Cryptocurrency('HTH', 'HTH', 8, 'hth_logo_small.png', 60, '', true, true, true, ''), 		
             'DOGE' => new NMM_Cryptocurrency('DOGE', 'Dogecoin', 8, 'dogecoin_logo_small.png', 60, 'Ð', true, true, true, ''),
             'XMY' => new NMM_Cryptocurrency('XMY', 'Myriad', 8, 'myriad_logo_small.png', 60, '', true, true, true, ''),
             'BTX' => new NMM_Cryptocurrency('BTX', 'Bitcore', 8, 'bitcore_logo_small.png', 60, '', true, true, true, ''),
@@ -202,6 +203,9 @@ class NMM_Cryptocurrencies {
         if ($cryptoId === 'DASH') {
             return preg_match('/^X[1-9A-HJ-NP-Za-km-z]{33}/', $address);
         }
+	if ($cryptoId === 'HTH') {
+            return preg_match('/^X[1-9A-HJ-NP-Za-km-z]{33}/', $address);
+        }	
         if ($cryptoId === 'XRP') {
             return preg_match('/^r[0-9a-zA-Z]{28,37}/', $address);
         }
