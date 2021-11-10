@@ -1076,6 +1076,9 @@ class HdHelper
         if ($cryptoId === 'DASH' && $type === 'p2pkh') {
             $addrtype = chr(76);
         }
+        if ($cryptoId === 'HTH' && $type === 'p2pkh') {
+            $addrtype = chr(76);
+        }
         if ($cryptoId === 'XMY' && $type === 'p2pkh') {
             $addrtype = chr(50);
         }
