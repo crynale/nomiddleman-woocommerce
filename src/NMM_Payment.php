@@ -142,6 +142,9 @@ class NMM_Payment {
 		if ($cryptoId === 'DASH') {
 			$result = NMM_Blockchain::get_dash_address_transactions($address);
 		}
+		if ($cryptoId === 'HTH') {
+			$result = NMM_Blockchain::get_hth_address_transactions($address);
+		}
 		if ($cryptoId === 'XRP') {
 			$result = NMM_Blockchain::get_xrp_address_transactions($address);
 		}
