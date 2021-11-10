@@ -219,7 +219,7 @@ class NMM_Blockchain {
 	public static function get_hthblockexplorer_total_received_for_hth_address($address) {
 		$userAgentString = self::get_user_agent_string();
 		
-		$request = 'https://dashblockexplorer.com/api/addr/' . $address . '/totalReceived';
+		$request = 'https://chainz.cryptoid.info/hth/api.dws?q=addresses/' . $address . '/totalReceived';
 
 		$args = array(
 			'user-agent' => $userAgentString
