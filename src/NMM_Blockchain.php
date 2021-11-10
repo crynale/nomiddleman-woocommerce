@@ -773,8 +773,7 @@ class NMM_Blockchain {
 	}
 
 	public static function get_hth_address_transactions($address) {		
-		
-		$request = 'https://dashblockexplorer.com/api/txs/?address=' . $address;
+		$request = 'https://chainz.cryptoid.info/hth/api.dws?q=lasttxs' . $address;
 		$response = wp_remote_get($request);
 
 		if (is_wp_error($response) || $response['response']['code'] !== 200) {
