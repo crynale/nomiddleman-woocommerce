@@ -474,6 +474,9 @@ class NMM_Hd {
 		if ($cryptoId == 'SMART') {
 			return self::is_valid_xpub($mpk) || self::is_valid_ypub($mpk) || self::is_valid_zpub($mpk);
 		}
+		if ($cryptoId === 'MAZA') {
+			return self::is_valid_xpub($mpk) || self::is_valid_ypub($mpk) || self::is_valid_zpub($mpk);
+		}
 	}
 }
 
