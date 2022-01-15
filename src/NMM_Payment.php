@@ -229,16 +229,18 @@ class NMM_Payment {
 		if ($cryptoId === 'GRS') {
 			$result = NMM_Blockchain::get_grs_address_transactions($address);	
 		}
-        if ($cryptoId === 'DGB') {
-            $result = NMM_Blockchain::get_dgb_address_transactions($address);
+        	if ($cryptoId === 'DGB') {
+        		$result = NMM_Blockchain::get_dgb_address_transactions($address);
 		}
-        if ($cryptoId === 'SMART') {
-            $result = NMM_Blockchain::get_smart_address_transactions('SMART', $address);
-        }
-        if ($cryptoId === 'USDC') {
+	        if ($cryptoId === 'SMART') {
+        		$result = NMM_Blockchain::get_smart_address_transactions('SMART', $address);
+        	}
+        	if ($cryptoId === 'USDC') {
 			$result = NMM_Blockchain::get_erc20_address_transactions('USDC', $address);
 		}
-		
+		if ($cryptoId === 'MAZA') {
+            		$result = NMM_Blockchain::get_maza_address_transactions('MAZA', $address);
+		}
 		if ($result['result'] === 'error') {			
 			NMM_Util::log(__FILE__, __LINE__, 'BAD API CALL');
 			throw new \Exception('Could not reach external service to do auto payment processing.');
