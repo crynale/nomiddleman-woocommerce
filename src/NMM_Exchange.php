@@ -128,6 +128,9 @@ class NMM_Exchange {
             case 'BCD':
                 $coingeckoCrytoKey = 'bitcoin-diamond';
                 break;   
+	    case 'MAZA':
+                $coingeckoCrytoKey = 'maza';
+                break;   
             default:
                 return 0;
                 break;
