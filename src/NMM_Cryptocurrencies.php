@@ -15,6 +15,7 @@ class NMM_Cryptocurrencies {
             'DOGE' => new NMM_Cryptocurrency('DOGE', 'Dogecoin', 8, 'dogecoin_logo_small.png', 60, 'Ð', true, true, true, ''),
             'XMY' => new NMM_Cryptocurrency('XMY', 'Myriad', 8, 'myriad_logo_small.png', 60, '', true, true, true, ''),
             'BTX' => new NMM_Cryptocurrency('BTX', 'Bitcore', 8, 'bitcore_logo_small.png', 60, '', true, true, true, ''),
+	    'MAZA' => new NMM_Cryptocurrency('MAZA', 'Maza', 8, 'maza_logo_small.png', 60, '', true, true, true, false),
 			
             // auto-pay coins            
             'ETH' => new NMM_Cryptocurrency('ETH', 'Ethereum', 18, 'ethereum_logo_small.png', 60, 'Ξ', false, true, true, ''),
@@ -38,8 +39,7 @@ class NMM_Cryptocurrencies {
             'WAVES' => new NMM_Cryptocurrency('WAVES', 'Waves', 8, 'waves_logo_small.png', 60, '', false, true, true, ''),
             'GRS' => new NMM_Cryptocurrency('GRS', 'Groestlcoin', 8, 'groestlcoin_logo_small.png', 60, '', false, true, true, false),
             'APL' => new NMM_Cryptocurrency('APL', 'Apollo Currency', 8, 'apollocurrency_logo_small.png', 60, '', false, false, true, false),
-	    'MAZA' => new NMM_Cryptocurrency('MAZA', 'Maza', 8, 'maza_logo_small.png', 60, '', true, true, true, false),
-			
+	   			
             // tokens
             'HOT' => new NMM_Cryptocurrency('HOT', 'Holochain', 18, 'holochain_logo_small.png', 60, '', false, true, true, '0x6c6ee5e31d828de241282b9606c8e98ea48526e2'),
             'LINK' => new NMM_Cryptocurrency('LINK', 'Chainlink', 18, 'chainlink_logo_small.png', 60, '', false, true, true, '0x514910771af9ca656af840dff83e8264ecf986ca'),
