@@ -774,9 +774,9 @@ class NMM_Blockchain {
 			foreach ($rawTransaction->vout as $vout) {
 				if ($vout->scriptPubKey->addresses[0] === $address) {
 					$transactions[] = new NMM_Transaction($vout->value * 100000000, 
-														  $rawTransaction->confirmations, 
-														  $rawTransaction->time,
-														  $rawTransaction->txid);		
+						  $rawTransaction->confirmations, 
+						  $rawTransaction->time,
+						  $rawTransaction->txid);		
 				}
 			}
 			
@@ -888,6 +888,57 @@ class NMM_Blockchain {
         return $result;
     }
 
+
+    public static function get_maza_address_transactions($address) {
+        $args = array('timeout' => 25);
+        $request = 'https://mazacha.in/ext/getbalance/' . $address;
+
+        $response = wp_remote_get($request, $args);
+
+        if (is_wp_error($response) || $response['response']['code'] !== 200) {
+            NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
+
+            //TODO: https://insight.smartcash.cc/
+            $result = array(
+                'result' => 'error',
+                'total_received' => '',
+            );
+
+            return $result;
+        }
+
+        $body = json_decode($response['body']);
+
+        $rawTransactions = $body->txs;
+        if (!is_array($rawTransactions)) {
+            $result = array(
+                'result' => 'error',
+                'message' => 'No transactions found',
+            );
+
+            return $result;
+        }
+        $transactions = array();
+        foreach ($rawTransactions as $rawTransaction) {
+            foreach ($rawTransaction->vout as $vout) {
+                if ($vout->scriptPubKey->addresses[0] === $address) {
+                    $transactions[] = new NMM_Transaction($vout->value * 100000000,
+                        $rawTransaction->confirmations,
+                        $rawTransaction->time,
+                        $rawTransaction->txid);
+                }
+            }
+
+
+        }
+
+        $result = array (
+            'result' => 'success',
+            'transactions' => $transactions,
+        );
+
+        return $result;
+    }
 
     public static function get_smart_address_transactions($address) {
         $args = array('timeout' => 25);
