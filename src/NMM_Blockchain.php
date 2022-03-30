@@ -898,11 +898,10 @@ class NMM_Blockchain {
         if (is_wp_error($response) || $response['response']['code'] !== 200) {
             NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
 
-            //TODO: https://insight.smartcash.cc/
-            $result = array(
-                'result' => 'error',
-                'total_received' => '',
-            );
+        $result = array(
+              'result' => 'error',
+              'total_received' => '',
+        );
 
             return $result;
         }
