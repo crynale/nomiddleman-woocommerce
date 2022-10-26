@@ -216,6 +216,37 @@ class NMM_Blockchain {
 		return $result;
 	}
 
+	public static function get_hthblockexplorer_total_received_for_hth_address($address) {
+		$userAgentString = self::get_user_agent_string();
+		
+		$request = 'https://chainz.cryptoid.info/hth/api.dws?q=addresses/' . $address . '/totalReceived';
+
+		$args = array(
+			'user-agent' => $userAgentString
+		);
+
+		$response = wp_remote_get($request, $args);
+		if (is_wp_error($response) || $response['response']['code'] !== 200) {
+			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
+
+			$result = array (
+				'result' => 'error',
+				'total_received' => '',
+			);
+
+			return $result;
+		}
+		
+		$totalReceived = (float) json_decode($response['body']) / 100000000;
+
+		$result = array (
+			'result' => 'success',
+			'total_received' => $totalReceived,
+		);
+
+		return $result;
+	}
+	
 	public static function get_chainso_total_received_for_doge_address($address) {		
 		$userAgentString = self::get_user_agent_string();
 		
@@ -813,6 +844,54 @@ class NMM_Blockchain {
 		return $result;
 	}
 
+	public static function get_hth_address_transactions($address) {		
+		$request = 'https://chainz.cryptoid.info/hth/api.dws?q=lasttxs' . $address;
+		$response = wp_remote_get($request);
+
+		if (is_wp_error($response) || $response['response']['code'] !== 200) {
+			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
+
+			$result = array(
+				'result' => 'error',
+				'total_received' => '',
+			);
+
+			return $result;
+		}
+
+		$body = json_decode($response['body']);
+
+		$rawTransactions = $body->txs;
+		if (!is_array($rawTransactions)) {
+			$result = array(
+				'result' => 'error',
+				'message' => 'No transactions found',
+			);
+
+			return $result;
+		}
+		$transactions = array();
+		foreach ($rawTransactions as $rawTransaction) {
+			foreach ($rawTransaction->vout as $vout) {
+				if ($vout->scriptPubKey->addresses[0] === $address) {
+					$transactions[] = new NMM_Transaction($vout->value * 100000000, 
+														  $rawTransaction->confirmations, 
+														  $rawTransaction->time,
+														  $rawTransaction->txid);		
+				}
+			}
+			
+		
+		}
+
+		$result = array (
+			'result' => 'success',
+			'transactions' => $transactions,
+		);
+
+		return $result;
+	}
+	
 	public static function get_dcr_address_transactions($address) {
 		
 		$request = 'https://explorer.dcrdata.org/insight/api/txs/?address=' . $address;

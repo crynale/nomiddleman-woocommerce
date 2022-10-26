@@ -124,6 +124,9 @@ class NMM_Hd {
 		if ($cryptoId === 'DASH') {
 			return self::get_total_received_for_dash_address($address);
 		}
+		if ($cryptoId === 'HTH') {
+			return self::get_total_received_for_hth_address($address);
+		}
 		if ($cryptoId === 'DOGE') {
 			return self::get_total_received_for_doge_address($address);
 		}
@@ -194,6 +197,16 @@ class NMM_Hd {
 		throw new \Exception("Unable to get DASH HD address information from external sources.");
 	}
 
+	private static function get_total_received_for_hth_address($address) {
+		$result = NMM_Blockchain::get_hthblockexplorer_total_received_for_hth_address($address);
+
+		if ($result['result'] === 'success') {
+			return $result['total_received'];
+		}		
+
+		throw new \Exception("Unable to get HTH address information from external sources.");
+	}
+	
 	private static function get_total_received_for_doge_address($address) {
 		$result = NMM_Blockchain::get_chainso_total_received_for_doge_address($address);
 
@@ -273,6 +286,9 @@ class NMM_Hd {
 		}
 		if ($cryptoId === 'DASH') {
 			return self::is_dirty_dash_address($address);	
+		}
+		if ($cryptoId === 'HTH') {
+			return self::is_dirty_hth_address($address);	
 		}
 		if ($cryptoId === 'DOGE') {
 			return self::is_dirty_doge_address($address);	
@@ -375,6 +391,10 @@ class NMM_Hd {
 		return self::get_total_received_for_dash_address($address) >= 0.00000001;
 	}
 
+	private static function is_dirty_hth_address($address) {
+		return self::get_total_received_for_hth_address($address) >= 0.00000001;
+	}
+	
 	private static function is_dirty_doge_address($address) {
 		return self::get_total_received_for_doge_address($address) >= 0.00000001;
 	}
@@ -460,6 +480,9 @@ class NMM_Hd {
 			return self::is_valid_xpub($mpk) || self::is_valid_ypub($mpk);
 		}
 		if ($cryptoId === 'DASH') {
+			return self::is_valid_xpub($mpk);
+		}
+		if ($cryptoId === 'HTH') {
 			return self::is_valid_xpub($mpk);
 		}
 		if ($cryptoId === 'DOGE') {
