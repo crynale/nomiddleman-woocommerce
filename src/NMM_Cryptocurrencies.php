@@ -245,8 +245,9 @@ class NMM_Cryptocurrencies {
         if ($cryptoId === 'ADA') {
             $match1 = preg_match('/^Ddz[0-9a-zA-Z]{80,120}/', $address);
             $match2 = preg_match('/^Ae2tdPwUPE[0-9a-zA-Z]{46,53}/', $address);
+            $match3 = preg_match('/^addr[0-9a-zA-Z]{99}/', $address);
 
-            return $match1 || $match2;
+            return $match1 || $match2 || $match3;
         }
         if ($cryptoId === 'XTZ') {
             return preg_match('/^tz1[0-9a-zA-Z]{30,39}/', $address);
