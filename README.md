@@ -1,4 +1,4 @@
-# Zero-Fee Crypto Checkout for Woocommerce - A WordPress plugin
+# nomiddleman-crypto-payments-for-woocommerce A WordPress plugin
 
 [Get the legacy 'NoMiddleMan' extension in the WordPress plugin repo *(in the future this will be replaced)*](https://wordpress.org/plugins/nomiddleman-crypto-payments-for-woocommerce/)
 
