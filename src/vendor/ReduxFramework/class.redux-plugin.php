@@ -26,7 +26,7 @@
              * @since       3.0.0
              */
 
-            const VERSION = '3.6.15';
+            final const VERSION = '3.6.15';
 
             /**
              * @access      protected
@@ -119,7 +119,7 @@
                     $plugins = get_site_option( 'active_sitewide_plugins' );
 
                     foreach ( $plugins as $file => $plugin ) {
-                        if ( strpos( $file, 'redux-framework.php' ) !== false ) {
+                        if ( strpos( (string) $file, 'redux-framework.php' ) !== false ) {
                             $this->plugin_network_activated = true;
                             $this->options                  = get_site_option( 'ReduxFrameworkPlugin', $defaults );
                         }
@@ -167,18 +167,18 @@
              * @return      void
              */
             private function hooks() {
-                add_action( 'wp_loaded', array( $this, 'options_toggle_check' ) );
+                add_action( 'wp_loaded', $this->options_toggle_check(...) );
 
                 // Activate plugin when new blog is added
-                add_action( 'wpmu_new_blog', array( $this, 'activate_new_site' ) );
+                add_action( 'wpmu_new_blog', $this->activate_new_site(...) );
 
                 // Display admin notices
-                add_action( 'admin_notices', array( $this, 'admin_notices' ) );
+                add_action( 'admin_notices', $this->admin_notices(...) );
 
                 // Edit plugin metalinks
-                add_filter( 'plugin_row_meta', array( $this, 'plugin_metalinks' ), null, 2 );
+                add_filter( 'plugin_row_meta', $this->plugin_metalinks(...), null, 2 );
 
-                add_action( 'activated_plugin', array( $this, 'load_first' ) );
+                add_action( 'activated_plugin', $this->load_first(...) );
 
                 do_action( 'redux/plugin/hooks', $this );
             }
@@ -187,7 +187,7 @@
                 $plugin_dir = Redux_Helpers::cleanFilePath( WP_PLUGIN_DIR ) . '/';
                 $self_file  = Redux_Helpers::cleanFilePath( __FILE__ );
 
-                $path = str_replace( $plugin_dir, '', $self_file );
+                $path = str_replace( $plugin_dir, '', (string) $self_file );
                 $path = str_replace( 'class.redux-plugin.php', 'redux-framework.php', $path );
 
                 if ( $plugins = get_option( 'active_plugins' ) ) {
