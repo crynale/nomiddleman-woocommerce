@@ -84,21 +84,21 @@
 
                 // Windows-proof constants: replace backward by forward slashes. Thanks to: @peterbouwmeester
                 self::$_dir           = trailingslashit( $dir );
-                self::$wp_content_url = trailingslashit( Redux_Helpers::cleanFilePath( ( is_ssl() ? str_replace( 'http://', 'https://', WP_CONTENT_URL ) : WP_CONTENT_URL ) ) );
+                self::$wp_content_url = trailingslashit( Redux_Helpers::cleanFilePath( ( is_ssl() ? str_replace( 'http://', 'https://', (string) WP_CONTENT_URL ) : WP_CONTENT_URL ) ) );
 
                 // See if Redux is a plugin or not
-                if ( strpos( Redux_Helpers::cleanFilePath( __FILE__ ), Redux_Helpers::cleanFilePath( get_stylesheet_directory() ) ) !== false || strpos( Redux_Helpers::cleanFilePath( __FILE__ ), Redux_Helpers::cleanFilePath( get_template_directory_uri() ) ) !== false || strpos( Redux_Helpers::cleanFilePath( __FILE__ ), Redux_Helpers::cleanFilePath( WP_CONTENT_DIR . '/themes/' ) ) !== false ) {
+                if ( strpos( (string) Redux_Helpers::cleanFilePath( __FILE__ ), (string) Redux_Helpers::cleanFilePath( get_stylesheet_directory() ) ) !== false || strpos( (string) Redux_Helpers::cleanFilePath( __FILE__ ), (string) Redux_Helpers::cleanFilePath( get_template_directory_uri() ) ) !== false || strpos( (string) Redux_Helpers::cleanFilePath( __FILE__ ), (string) Redux_Helpers::cleanFilePath( WP_CONTENT_DIR . '/themes/' ) ) !== false ) {
                     self::$_is_plugin = false;
                 } else {
                     // Check if plugin is a symbolic link, see if it's a plugin. If embedded, we can't do a thing.
-                    if ( strpos( self::$_dir, ABSPATH ) === false ) {
+                    if ( strpos( (string) self::$_dir, (string) ABSPATH ) === false ) {
                         if ( ! function_exists( 'get_plugins' ) ) {
                             require_once ABSPATH . 'wp-admin/includes/plugin.php';
                         }
 
                         $is_plugin = false;
                         foreach ( get_plugins() as $key => $value ) {
-                            if ( is_plugin_active( $key ) && strpos( $key, 'redux-framework.php' ) !== false ) {
+                            if ( is_plugin_active( $key ) && strpos( (string) $key, 'redux-framework.php' ) !== false ) {
                                 self::$_dir = trailingslashit( Redux_Helpers::cleanFilePath( WP_CONTENT_DIR . '/plugins/' . plugin_dir_path( $key ) . 'ReduxCore/' ) );
                                 $is_plugin  = true;
                             }
@@ -112,16 +112,16 @@
                 if ( self::$_is_plugin == true || self::$_as_plugin == true ) {
                     self::$_url = plugin_dir_url( __FILE__ );
                 } else {
-                    if ( strpos( Redux_Helpers::cleanFilePath( __FILE__ ), Redux_Helpers::cleanFilePath( get_template_directory() ) ) !== false ) {
-                        $relative_url = str_replace( Redux_Helpers::cleanFilePath( get_template_directory() ), '', self::$_dir );
+                    if ( strpos( (string) Redux_Helpers::cleanFilePath( __FILE__ ), (string) Redux_Helpers::cleanFilePath( get_template_directory() ) ) !== false ) {
+                        $relative_url = str_replace( Redux_Helpers::cleanFilePath( get_template_directory() ), '', (string) self::$_dir );
                         self::$_url   = trailingslashit( get_template_directory_uri() . $relative_url );
-                    } else if ( strpos( Redux_Helpers::cleanFilePath( __FILE__ ), Redux_Helpers::cleanFilePath( get_stylesheet_directory() ) ) !== false ) {
-                        $relative_url = str_replace( Redux_Helpers::cleanFilePath( get_stylesheet_directory() ), '', self::$_dir );
+                    } else if ( strpos( (string) Redux_Helpers::cleanFilePath( __FILE__ ), (string) Redux_Helpers::cleanFilePath( get_stylesheet_directory() ) ) !== false ) {
+                        $relative_url = str_replace( Redux_Helpers::cleanFilePath( get_stylesheet_directory() ), '', (string) self::$_dir );
                         self::$_url   = trailingslashit( get_stylesheet_directory_uri() . $relative_url );
                     } else {
                         $wp_content_dir = trailingslashit( Redux_Helpers::cleanFilePath( WP_CONTENT_DIR ) );
-                        $wp_content_dir = trailingslashit( str_replace( '//', '/', $wp_content_dir ) );
-                        $relative_url   = str_replace( $wp_content_dir, '', self::$_dir );
+                        $wp_content_dir = trailingslashit( str_replace( '//', '/', (string) $wp_content_dir ) );
+                        $relative_url   = str_replace( $wp_content_dir, '', (string) self::$_dir );
                         self::$_url     = trailingslashit( self::$wp_content_url . $relative_url );
                     }
                 }
@@ -180,7 +180,7 @@
             public $omit_admin_items = false;
             public $apiHasRun = false;
             public $transients;
-            
+
             /**
              * Class Constructor. Defines the args for the theme options class
              *
@@ -284,12 +284,12 @@
                         } else if ( ! empty( $this->args['menu_title'] ) ) {
                             $this->args['page_slug'] = sanitize_html_class( $this->args['menu_title'] );
                         } else {
-                            $this->args['page_slug'] = str_replace( '-', '_', $this->args['opt_name'] );
+                            $this->args['page_slug'] = str_replace( '-', '_', (string) $this->args['opt_name'] );
                         }
                     }
-                    
+
                     $this->change_demo_defaults();
-                    
+
                     // Get rid of extra_tabs! Not needed.
                     if ( is_array( $extra_tabs ) && ! empty ( $extra_tabs ) ) {
                         foreach ( $extra_tabs as $tab ) {
@@ -352,73 +352,67 @@
                     }
 
                     // Options page
-                    add_action( 'admin_menu', array( $this, '_options_page' ) );
+                    add_action( 'admin_menu', $this->_options_page(...) );
 
                     // Add a network menu
                     if ( $this->args['database'] == "network" && $this->args['network_admin'] ) {
-                        add_action( 'network_admin_menu', array( $this, '_options_page' ) );
+                        add_action( 'network_admin_menu', $this->_options_page(...) );
                     }
 
                     // Admin Bar menu
-                    add_action( 'admin_bar_menu', array(
-                        $this,
-                        '_admin_bar_menu'
-                    ), $this->args['admin_bar_priority'] );
+                    add_action( 'admin_bar_menu', $this->_admin_bar_menu(...), $this->args['admin_bar_priority'] );
 
                     // Register setting
-                    add_action( 'admin_init', array( $this, '_register_settings' ) );
+                    add_action( 'admin_init', $this->_register_settings(...) );
 
                     // Display admin notices in dev_mode
                     if ( true == $this->args['dev_mode'] ) {
                         if ( true == $this->args['update_notice'] ) {
-                            add_action( 'admin_init', array( $this, '_update_check' ) );
+                            add_action( 'admin_init', $this->_update_check(...) );
                         }
                     }
 
                     // Display admin notices
-                    add_action( 'admin_notices', array( $this, '_admin_notices' ), 99 );
+                    add_action( 'admin_notices', $this->_admin_notices(...), 99 );
 
                     // Check for dismissed admin notices.
-                    add_action( 'admin_init', array( $this, '_dismiss_admin_notice' ), 9 );
+                    add_action( 'admin_init', $this->_dismiss_admin_notice(...), 9 );
 
                     // Enqueue the admin page CSS and JS
                     if ( isset ( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
-                        add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
+                        add_action( 'admin_enqueue_scripts', $this->_enqueue(...), 1 );
                     }
 
                     // Output dynamic CSS
                     // Frontend: Maybe enqueue dynamic CSS and Google fonts
                     if ( empty ( $this->args['output_location'] ) || in_array( 'frontend', $this->args['output_location'] ) ) {
-                        add_action( 'wp_head', array( &$this, '_output_css' ), 150 );
-                        add_action( 'wp_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
+                        add_action( 'wp_head', $this->_output_css(...), 150 );
+                        add_action( 'wp_enqueue_scripts', $this->_enqueue_output(...), 150 );
                     }
 
                     // Login page: Maybe enqueue dynamic CSS and Google fonts
                     if ( in_array( 'login', $this->args['output_location'] ) ) {
-                        add_action( 'login_head', array( &$this, '_output_css' ), 150 );
-                        add_action( 'login_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
+                        add_action( 'login_head', $this->_output_css(...), 150 );
+                        add_action( 'login_enqueue_scripts', $this->_enqueue_output(...), 150 );
                     }
 
                     // Admin area: Maybe enqueue dynamic CSS and Google fonts
                     if ( in_array( 'admin', $this->args['output_location'] ) ) {
-                        add_action( 'admin_head', array( &$this, '_output_css' ), 150 );
-                        add_action( 'admin_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
+                        add_action( 'admin_head', $this->_output_css(...), 150 );
+                        add_action( 'admin_enqueue_scripts', $this->_enqueue_output(...), 150 );
                     }
 
 
-                    add_action( 'wp_print_scripts', array( $this, 'vc_fixes' ), 100 );
-                    add_action( 'admin_enqueue_scripts', array( $this, 'vc_fixes' ), 100 );
+                    add_action( 'wp_print_scripts', $this->vc_fixes(...), 100 );
+                    add_action( 'admin_enqueue_scripts', $this->vc_fixes(...), 100 );
 
 
                     if ( $this->args['database'] == "network" && $this->args['network_admin'] ) {
-                        add_action( 'network_admin_edit_redux_' . $this->args['opt_name'], array(
-                            $this,
-                            'save_network_page'
-                        ), 10, 0 );
-                        add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
+                        add_action( 'network_admin_edit_redux_' . $this->args['opt_name'], $this->save_network_page(...), 10, 0 );
+                        add_action( 'admin_bar_menu', $this->network_admin_bar(...), 999 );
                     }
                     // Ajax saving!!!
-                    add_action( "wp_ajax_" . $this->args['opt_name'] . '_ajax_save', array( $this, "ajax_save" ) );
+                    add_action( "wp_ajax_" . $this->args['opt_name'] . '_ajax_save', $this->ajax_save(...) );
 
                     if ( $this->args['dev_mode'] == true || Redux_Helpers::isLocalHost() == true ) {
                         require_once 'core/dashboard.php';
@@ -647,7 +641,7 @@
 
                 $basename = basename( __FILE__ );
                 $basepath = plugin_basename( __FILE__ );
-                $basepath = str_replace( $basename, '', $basepath );
+                $basepath = str_replace( $basename, '', (string) $basepath );
 
                 $basepath = apply_filters( "redux/textdomain/basepath/{$this->args['opt_name']}", $basepath );
 
@@ -1004,7 +998,7 @@
                                 if ( isset ( $wp_post_types[ $name ]->labels->menu_name ) ) {
                                     $data[ $name ] = $wp_post_types[ $name ]->labels->menu_name;
                                 } else {
-                                    $data[ $name ] = ucfirst( $name );
+                                    $data[ $name ] = ucfirst( (string) $name );
                                 }
                             }
                         } else if ( $type == "tags" || $type == "tag" ) { // NOT WORKING!
@@ -1080,7 +1074,7 @@
 
                             foreach ( $wp_roles->roles as $role ) {
                                 foreach ( $role['capabilities'] as $key => $cap ) {
-                                    $data[ $key ] = ucwords( str_replace( '_', ' ', $key ) );
+                                    $data[ $key ] = ucwords( str_replace( '_', ' ', (string) $key ) );
                                 }
                             }
                         } else if ( $type == "callback" ) {
@@ -1282,7 +1276,7 @@
 
                 // Fix the global variable name
                 if ( $this->args['global_variable'] == "" && $this->args['global_variable'] !== false ) {
-                    $this->args['global_variable'] = str_replace( '-', '_', $this->args['opt_name'] );
+                    $this->args['global_variable'] = str_replace( '-', '_', (string) $this->args['opt_name'] );
                 }
 
                 // Force dev_mode on WP_DEBUG = true and if it's a local server
@@ -1329,7 +1323,7 @@
                 global $submenu;
 
                 // Just in case. One never knows.
-                $page_parent = strtolower( $page_parent );
+                $page_parent = strtolower( (string) $page_parent );
 
                 $test = array(
                     'index.php'               => 'dashboard',
@@ -1348,7 +1342,7 @@
                 if ( isset ( $test[ $page_parent ] ) ) {
                     $function   = 'add_' . $test[ $page_parent ] . '_page';
                     $this->page = $function (
-                        $page_title, $menu_title, $page_permissions, $page_slug, array( $this, 'generate_panel' )
+                        $page_title, $menu_title, $page_permissions, $page_slug, $this->generate_panel(...)
                     );
                 } else {
                     // Network settings and Post type menus. These do not have
@@ -1387,7 +1381,7 @@
                                 if ( $needle_menu_slug != false ) {
 
                                     // check if the current needle menu equals page_parent
-                                    if ( strcasecmp( $needle_menu_slug, $page_parent ) == 0 ) {
+                                    if ( strcasecmp( (string) $needle_menu_slug, $page_parent ) == 0 ) {
 
                                         // found an empty parent menu
                                         $addMenu = true;
@@ -1403,10 +1397,7 @@
                     // Add the submenu if it's permitted.
                     if ( true == $addMenu ) {
                         // ONLY for non-wp.org themes OR plugins. Theme-Check alert shown if used and IS theme.
-                        $this->page = call_user_func( 'add_submenu_page', $page_parent, $page_title, $menu_title, $page_permissions, $page_slug, array(
-                            &$this,
-                            'generate_panel'
-                        ) );
+                        $this->page = call_user_func( 'add_submenu_page', $page_parent, $page_title, $menu_title, $page_permissions, $page_slug, $this->generate_panel(...) );
                     }
                 }
             }
@@ -1429,10 +1420,7 @@
                     );
                 } else {
                     // Theme-Check notice is displayed for WP.org theme devs, informing them to NOT use this.
-                    $this->page = call_user_func( 'add_menu_page', $this->args['page_title'], $this->args['menu_title'], $this->args['page_permissions'], $this->args['page_slug'], array(
-                        &$this,
-                        'generate_panel'
-                    ), $this->args['menu_icon'], $this->args['page_priority']
+                    $this->page = call_user_func( 'add_menu_page', $this->args['page_title'], $this->args['menu_title'], $this->args['page_permissions'], $this->args['page_slug'], $this->generate_panel(...), $this->args['menu_icon'], $this->args['page_priority']
                     );
 
                     if ( true === $this->args['allow_sub_menu'] ) {
@@ -1463,7 +1451,7 @@
                     }
                 }
 
-                add_action( "load-{$this->page}", array( &$this, '_load_page' ) );
+                add_action( "load-{$this->page}", $this->_load_page(...) );
             }
             // _options_page()
 
@@ -1713,10 +1701,10 @@
             public function _load_page() {
 
                 // Do admin head action for this page
-                add_action( 'admin_head', array( &$this, 'admin_head' ) );
+                add_action( 'admin_head', $this->admin_head(...) );
 
                 // Do admin footer text hook
-                add_filter( 'admin_footer_text', array( &$this, 'admin_footer_text' ) );
+                add_filter( 'admin_footer_text', $this->admin_footer_text(...) );
 
                 $screen = get_current_screen();
 
@@ -1760,7 +1748,7 @@
                     }
 
                     // Construct message
-                    $msg = sprintf( __( 'Hints are tooltips that popup when %d the hint icon, offering addition information about the field in which they appear.  They can be %d d by using the link below.', 'redux-framework' ), $event, strtolower( $s ) ) . '<br/><br/>' . $url;
+                    $msg = sprintf( __( 'Hints are tooltips that popup when %d the hint icon, offering addition information about the field in which they appear.  They can be %d d by using the link below.', 'redux-framework' ), $event, strtolower( (string) $s ) ) . '<br/><br/>' . $url;
 
                     // Construct hint tab
                     $tab = array(
@@ -2000,10 +1988,7 @@
                 }
 
                 if ( $this->args['options_api'] == true ) {
-                    register_setting( $this->args['opt_name'] . '_group', $this->args['opt_name'], array(
-                        $this,
-                        '_validate_options'
-                    ) );
+                    register_setting( $this->args['opt_name'] . '_group', $this->args['opt_name'], $this->_validate_options(...) );
                 }
 
 
@@ -2087,10 +2072,7 @@
                     if ( ! $display || ! function_exists( 'add_settings_section' ) ) {
                         $this->no_panel_section[ $k ] = $section;
                     } else {
-                        add_settings_section( $this->args['opt_name'] . $k . '_section', $heading, array(
-                            &$this,
-                            '_section_desc'
-                        ), $this->args['opt_name'] . $k . '_section_group' );
+                        add_settings_section( $this->args['opt_name'] . $k . '_section', $heading, $this->_section_desc(...), $this->args['opt_name'] . $k . '_section_group' );
                     }
 
                     $sectionIndent = false;
@@ -2209,7 +2191,7 @@
 
                             // CORRECT URLS if media URLs are wrong, but attachment IDs are present.
                             if ( $field['type'] == "media" ) {
-                                if ( isset ( $this->options[ $field['id'] ]['id'] ) && isset ( $this->options[ $field['id'] ]['url'] ) && ! empty ( $this->options[ $field['id'] ]['url'] ) && strpos( $this->options[ $field['id'] ]['url'], str_replace( 'http://', '', WP_CONTENT_URL ) ) === false ) {
+                                if ( isset ( $this->options[ $field['id'] ]['id'] ) && isset ( $this->options[ $field['id'] ]['url'] ) && ! empty ( $this->options[ $field['id'] ]['url'] ) && strpos( (string) $this->options[ $field['id'] ]['url'], str_replace( 'http://', '', (string) WP_CONTENT_URL ) ) === false ) {
                                     $data = wp_get_attachment_url( $this->options[ $field['id'] ]['id'] );
 
                                     if ( isset ( $data ) && ! empty ( $data ) ) {
@@ -2225,7 +2207,7 @@
                             }
 
                             if ( $field['type'] == "background" ) {
-                                if ( isset ( $this->options[ $field['id'] ]['media']['id'] ) && isset ( $this->options[ $field['id'] ]['background-image'] ) && ! empty ( $this->options[ $field['id'] ]['background-image'] ) && strpos( $this->options[ $field['id'] ]['background-image'], str_replace( 'http://', '', WP_CONTENT_URL ) ) === false ) {
+                                if ( isset ( $this->options[ $field['id'] ]['media']['id'] ) && isset ( $this->options[ $field['id'] ]['background-image'] ) && ! empty ( $this->options[ $field['id'] ]['background-image'] ) && strpos( (string) $this->options[ $field['id'] ]['background-image'], str_replace( 'http://', '', (string) WP_CONTENT_URL ) ) === false ) {
                                     $data = wp_get_attachment_url( $this->options[ $field['id'] ]['media']['id'] );
 
                                     if ( isset ( $data ) && ! empty ( $data ) ) {
@@ -2241,7 +2223,7 @@
                             }
 
                             if ( $field['type'] == "slides" ) {
-                                if ( isset ( $this->options[ $field['id'] ] ) && is_array( $this->options[ $field['id'] ] ) && isset ( $this->options[ $field['id'] ][0]['attachment_id'] ) && isset ( $this->options[ $field['id'] ][0]['image'] ) && ! empty ( $this->options[ $field['id'] ][0]['image'] ) && strpos( $this->options[ $field['id'] ][0]['image'], str_replace( 'http://', '', WP_CONTENT_URL ) ) === false ) {
+                                if ( isset ( $this->options[ $field['id'] ] ) && is_array( $this->options[ $field['id'] ] ) && isset ( $this->options[ $field['id'] ][0]['attachment_id'] ) && isset ( $this->options[ $field['id'] ][0]['image'] ) && ! empty ( $this->options[ $field['id'] ][0]['image'] ) && strpos( (string) $this->options[ $field['id'] ][0]['image'], str_replace( 'http://', '', (string) WP_CONTENT_URL ) ) === false ) {
                                     foreach ( $this->options[ $field['id'] ] as $key => $val ) {
                                         $data = wp_get_attachment_url( $val['attachment_id'] );
 
@@ -2335,10 +2317,7 @@
                                 }
                                 if ( $this->args['options_api'] == true ) {
                                     add_settings_field(
-                                        "{$fieldk}_field", $th, array(
-                                        &$this,
-                                        '_field_input'
-                                    ), "{$this->args['opt_name']}{$k}_section_group", "{$this->args['opt_name']}{$k}_section", $field
+                                        "{$fieldk}_field", $th, $this->_field_input(...), "{$this->args['opt_name']}{$k}_section_group", "{$this->args['opt_name']}{$k}_section", $field
                                     );
                                 }
                             }
@@ -2432,7 +2411,7 @@
                 }
 
                 foreach ( $folders as $folder ) {
-                    if ( $folder === '.' || $folder === '..' || ! is_dir( $path . $folder ) || substr( $folder, 0, 1 ) === '.' || substr( $folder, 0, 1 ) === '@' || substr( $folder, 0, 4 ) === '_vti' ) {
+                    if ( $folder === '.' || $folder === '..' || ! is_dir( $path . $folder ) || substr( (string) $folder, 0, 1 ) === '.' || substr( (string) $folder, 0, 1 ) === '@' || substr( (string) $folder, 0, 4 ) === '_vti' ) {
                         continue;
                     }
 
@@ -2521,7 +2500,7 @@
 
                 // Save the values not in the panel
                 if ( isset ( $plugin_options['redux-no_panel'] ) ) {
-                    $keys = explode( '|', $plugin_options['redux-no_panel'] );
+                    $keys = explode( '|', (string) $plugin_options['redux-no_panel'] );
                     foreach ( $keys as $key ) {
                         $plugin_options[ $key ] = $this->options[ $key ];
                     }
@@ -2559,7 +2538,7 @@
                     }
 
                     if ( ! empty ( $import ) ) {
-                        $imported_options = json_decode( $import, true );
+                        $imported_options = json_decode( (string) $import, true );
                     }
 
                     if ( ! empty ( $imported_options ) && is_array( $imported_options ) && isset ( $imported_options['redux-backup'] ) && $imported_options['redux-backup'] == '1' ) {
@@ -2808,7 +2787,7 @@
                     //    }
                     //    unset($process);
                     //}
-                    $_POST['data'] = stripslashes( $_POST['data'] );
+                    $_POST['data'] = stripslashes( (string) $_POST['data'] );
 
                     // Old method of saving, in case we need to go back! - kp
                     //parse_str( $_POST['data'], $values );
@@ -2966,7 +2945,7 @@
 
                                 // Make sure 'validate field' is set to 'not_empty' or 'email_not_empty'
                                 //if ( $field['validate'] == 'not_empty' || $field['validate'] == 'email_not_empty' || $field['validate'] == 'numeric_not_empty' ) {
-                                if ( strtolower( substr( $field['validate'], - 9 ) ) == 'not_empty' ) {
+                                if ( strtolower( substr( (string) $field['validate'], - 9 ) ) == 'not_empty' ) {
 
                                     // Set the flag.
                                     $isNotEmpty = true;
@@ -3041,7 +3020,7 @@
                                                 if ( is_array( $plugin_options[ $field['id'] ][ $key ] ) ) {
                                                     $before = $plugin_options[ $field['id'] ][ $key ];
                                                 } else {
-                                                    $before = trim( $plugin_options[ $field['id'] ][ $key ] );
+                                                    $before = trim( (string) $plugin_options[ $field['id'] ][ $key ] );
                                                 }
                                             }
 
@@ -3069,7 +3048,7 @@
                                             if ( is_array( $plugin_options[ $field['id'] ] ) ) {
                                                 $pofi = $plugin_options[ $field['id'] ];
                                             } else {
-                                                $pofi = trim( $plugin_options[ $field['id'] ] );
+                                                $pofi = trim( (string) $plugin_options[ $field['id'] ] );
                                             }
                                         } else {
                                             $pofi = null;
@@ -3142,7 +3121,7 @@
                 }
 
                 $string = "";
-                if ( ( ( isset ( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset ( $section['icon_type'] ) && $section['icon_type'] == 'image' ) ) || ( isset( $section['icon'] ) && strpos( $section['icon'], '/' ) !== false ) ) {
+                if ( ( ( isset ( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset ( $section['icon_type'] ) && $section['icon_type'] == 'image' ) ) || ( isset( $section['icon'] ) && strpos( (string) $section['icon'], '/' ) !== false ) ) {
                     //if( !empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) {
                     $icon = ( ! isset ( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . esc_url( $section['icon'] ) . '" /> ';
                 } else {
@@ -3273,7 +3252,7 @@
              * @return      void
              */
             public function _section_desc( $section ) {
-                $id = rtrim( $section['id'], '_section' );
+                $id = rtrim( (string) $section['id'], '_section' );
                 $id = str_replace($this->args['opt_name'], '', $id);
 
                 if ( isset ( $this->sections[ $id ]['desc'] ) && ! empty ( $this->sections[ $id ]['desc'] ) ) {
@@ -3810,12 +3789,12 @@
 
                         if ( is_array( $checkValue ) ) {
                             foreach ( $checkValue as $idx => $opt ) {
-                                if ( strpos( $parentValue, (string) $opt ) !== false ) {
+                                if ( strpos( (string) $parentValue, (string) $opt ) !== false ) {
                                     $return = true;
                                 }
                             }
                         } else {
-                            if ( strpos( $parentValue, (string) $checkValue ) !== false ) {
+                            if ( strpos( (string) $parentValue, (string) $checkValue ) !== false ) {
                                 $return = true;
                             }
                         }
@@ -3829,12 +3808,12 @@
 
                         if ( is_array( $checkValue ) ) {
                             foreach ( $checkValue as $idx => $opt ) {
-                                if ( strpos( $parentValue, (string) $opt ) === false ) {
+                                if ( strpos( (string) $parentValue, (string) $opt ) === false ) {
                                     $return = true;
                                 }
                             }
                         } else {
-                            if ( strpos( $parentValue, (string) $checkValue ) === false ) {
+                            if ( strpos( (string) $parentValue, (string) $checkValue ) === false ) {
                                 $return = true;
                             }
                         }
@@ -3980,7 +3959,7 @@
                         foreach ( $this->args['admin_bar_links'] as $idx => $arr ) {
                             if ( is_array( $arr ) && ! empty( $arr ) ) {
                                 foreach ( $arr as $x => $y ) {
-                                    if ( strpos( strtolower( $y ), 'redux' ) !== false ) {
+                                    if ( strpos( strtolower( (string) $y ), 'redux' ) !== false ) {
                                         $msg = __( '<strong>Redux Framework Notice: </strong>There are references to the Redux Framework support site in your config\'s <code>admin_bar_links</code> argument.  This is sample data.  Please change or remove this data before shipping your product.', 'redux-framework' );
                                         $this->display_arg_change_notice( 'admin', $msg );
                                         $this->omit_admin_items = true;
@@ -3996,7 +3975,7 @@
                             if ( is_array( $arr ) && ! empty( $arr ) ) {
                                 foreach ( $arr as $x => $y ) {
                                     if (!$this->omit_share_icons) {
-                                        if ( strpos( strtolower( $y ), 'redux' ) !== false ) {
+                                        if ( strpos( strtolower( (string) $y ), 'redux' ) !== false ) {
                                             $msg = __( '<strong>Redux Framework Notice: </strong>There are references to the Redux Framework support site in your config\'s <code>share_icons</code> argument.  This is sample data.  Please change or remove this data before shipping your product.', 'redux-framework' );
                                             $this->display_arg_change_notice( 'share', $msg );
                                             $this->omit_share_icons = true;
@@ -4020,7 +3999,7 @@
                             'id'        => 'admin_config',
                             'dismiss'   => true
                         );
-                        
+
                         Redux_Admin_Notices::set_notice($data);
                     }
                 }
@@ -4034,7 +4013,7 @@
                             'id'        => 'share_config',
                             'dismiss'   => true
                         );
-                        
+
                         Redux_Admin_Notices::set_notice($data);
                     }
                 }
@@ -4113,7 +4092,7 @@
              */
             public static function user_can( $user, $capabilities, $object_id = null ) {
                 static $depth = 0;
-                
+
                 if ( $depth >= 30 ) {
                     return false;
                 }
@@ -4243,5 +4222,5 @@
          */
         ReduxFramework::init();
         do_action( 'redux/init' );
-        
+
     } // class_exists('ReduxFramework')

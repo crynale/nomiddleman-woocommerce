@@ -474,7 +474,7 @@
                  * @param       string        preset confirm string
                  */
                 $preset_confirm = apply_filters( "redux/{$this->parent->args['opt_name']}/localize/preset", __( 'Your current options will be replaced with the values of this preset. Would you like to proceed?', 'redux-framework' ) );
-                
+
                 /**
                  * Import confirm string
                  * filter 'redux/{opt_name}/localize/import
@@ -482,7 +482,7 @@
                  * @param       string        import confirm string
                  */
                 $import_confirm = apply_filters( "redux/{$this->parent->args['opt_name']}/localize/import", __( 'Your current options will be replaced with the values of this import. Would you like to proceed?', 'redux-framework' ) );
-                
+
                 global $pagenow;
                 $this->parent->localize_data['args'] = array(
                     'save_pending'          => $save_pending,

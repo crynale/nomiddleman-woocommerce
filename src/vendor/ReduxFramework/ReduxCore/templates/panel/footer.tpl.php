@@ -25,7 +25,7 @@
                     if ($skip_icons) {
                         continue;
                     }
-                    
+
                     // SHIM, use URL now
                     if ( isset( $link['link'] ) && ! empty( $link['link'] ) ) {
                         $link['url'] = $link['link'];
@@ -35,7 +35,7 @@
                     <a href="<?php echo esc_url( $link['url'] ) ?>" title="<?php echo esc_attr( $link['title'] ); ?>" target="_blank">
                         <?php if ( isset( $link['icon'] ) && ! empty( $link['icon'] ) ) : ?>
                             <i class="<?php
-                                if ( strpos( $link['icon'], 'el-icon' ) !== false && strpos( $link['icon'], 'el ' ) === false ) {
+                                if ( strpos( (string) $link['icon'], 'el-icon' ) !== false && strpos( (string) $link['icon'], 'el ' ) === false ) {
                                     $link['icon'] = 'el ' . $link['icon'];
                                 }
                                 echo esc_attr( $link['icon'] );

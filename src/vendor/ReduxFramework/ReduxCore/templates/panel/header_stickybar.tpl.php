@@ -22,7 +22,7 @@
                 submit_button( esc_attr__( 'Save Changes', 'redux-framework' ), 'primary', 'redux_save_sticky', false );
                 echo '&nbsp';
             }
-            
+
             if ( false === $this->parent->args['hide_reset'] ) {
                 submit_button( esc_attr__( 'Reset Section', 'redux-framework' ), 'secondary', $this->parent->args['opt_name'] . '[defaults-section]', false, array( 'id' => 'redux-defaults-section-sticky' ) );
                 echo '&nbsp';

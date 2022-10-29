@@ -62,7 +62,7 @@
                     if ( $data != '' || ! empty( $data ) ) {
 
                         if ( ! empty( $this->notice_data ) ) {
-                            if ( strcmp( $data, $this->notice_data ) == 0 ) {
+                            if ( strcmp( (string) $data, (string) $this->notice_data ) == 0 ) {
                                 // set new cookie for interval value
                                 Redux_Functions::setCookie( $this->cookie_id, time(), time() + ( 86400 * $this->interval ), '/' );
 
@@ -87,7 +87,7 @@
                 // Notice data exists?
                 if ( ! empty( $this->notice_data ) ) {
                     // decode json string
-                    $data = (Array) json_decode( $this->notice_data );
+                    $data = (Array) json_decode( (string) $this->notice_data );
                     // must be array and not empty
                     if ( is_array( $data ) && ! empty( $data ) ) {
 
