@@ -56,7 +56,7 @@ class CurveFp
                 return false;
             }
         } else if (extension_loaded('bcmath') && USE_EXT == 'BCMATH') {
-            $eq_zero = bccomp(bcmod(bcsub(bcpow($y, 2), bcadd(bcadd(bcpow($x, 3), bcmul($this->a, $x)), $this->b)), $this->prime), 0);
+            $eq_zero = bccomp(bcmod(bcsub(bcpow((string) $y, 2), bcadd(bcadd(bcpow((string) $x, 3), bcmul((string) $this->a, (string) $x)), (string) $this->b)), (string) $this->prime), 0);
 
             if ($eq_zero == 0) {
                 return true;
@@ -95,7 +95,7 @@ class CurveFp
                 return 1;
             }
         } else if (extension_loaded('bcmath') && USE_EXT == 'BCMATH') {
-            if (bccomp($cp1->a, $cp2->a) == 0 && bccomp($cp1->b, $cp2->b) == 0 && bccomp($cp1->prime, $cp2->prime) == 0) {
+            if (bccomp((string) $cp1->a, (string) $cp2->a) == 0 && bccomp((string) $cp1->b, (string) $cp2->b) == 0 && bccomp((string) $cp1->prime, (string) $cp2->prime) == 0) {
                 return 0;
             } else {
                 return 1;

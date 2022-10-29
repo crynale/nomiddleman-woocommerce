@@ -34,10 +34,10 @@ class bcmath_Utils
 {
     public static function bchexdec($hex) {
         if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
-            $len = strlen($hex);
+            $len = strlen((string) $hex);
             $dec = '';
             for ($i = 1; $i <= $len; $i++)
-                $dec = bcadd($dec, bcmul(strval(hexdec($hex[$i - 1])), bcpow('16', strval($len - $i))));
+                $dec = bcadd($dec, bcmul(strval(hexdec((string) $hex[$i - 1])), bcpow('16', strval($len - $i))));
 
             return $dec;
         } else {
@@ -51,8 +51,8 @@ class bcmath_Utils
             $positive = $dec < 0 ? false : true;
 
             while ($dec) {
-                $hex .= dechex(abs(bcmod($dec, '16')));
-                $dec = bcdiv($dec, '16', 0);
+                $hex .= dechex(abs(bcmod((string) $dec, '16')));
+                $dec = bcdiv((string) $dec, '16', 0);
             }
 
             if ($positive)
@@ -79,7 +79,7 @@ class bcmath_Utils
         $min = $x;
         $max = $y;
 
-        if (bccomp($min, $max) > 0) {
+        if (bccomp((string) $min, (string) $max) > 0) {
             $temp = $min;
             $min = $max;
             $max = $temp;
@@ -89,8 +89,8 @@ class bcmath_Utils
         $max = self::dec2base($max, 256);
 
         $buffer = array();
-        for ($i = 0; $i < strlen($min); ++$i) {
-            $buffer[] = substr($min, -$i - 1, 1) & substr($max, -$i - 1, 1);
+        for ($i = 0; $i < strlen((string) $min); ++$i) {
+            $buffer[] = substr((string) $min, -$i - 1, 1) & substr((string) $max, -$i - 1, 1);
         }
 
         $buffer = array_reverse($buffer);
@@ -106,7 +106,7 @@ class bcmath_Utils
         }
         $left  = self::dec2base($left, 2);
         $right = self::dec2base($right, 2);
-        $len   = max(strlen($left), strlen($right), (int)$bits);
+        $len   = max(strlen((string) $left), strlen((string) $right), (int)$bits);
         $left  = sprintf("%0{$len}s", $left);
         $right = sprintf("%0{$len}s", $right);
 
@@ -117,7 +117,7 @@ class bcmath_Utils
     {
         $bits = 0;
         while ($num > 0) {
-            $num = bcdiv($num, '2', 0);
+            $num = bcdiv((string) $num, '2', 0);
             $bits++;
         }
         // round to nearest boundrary
@@ -149,7 +149,7 @@ class bcmath_Utils
     public static function bcleftshift($num, $shift) {
         if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
             bcscale(0);
-            return bcmul($num, bcpow(2, $shift));
+            return bcmul((string) $num, bcpow(2, (string) $shift));
         } else {
             throw new \ErrorException("Please install BCMATH");
         }
@@ -160,7 +160,7 @@ class bcmath_Utils
     public static function bcrightshift($num, $shift) {
         if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
             bcscale(0);
-            return bcdiv($num, bcpow(2, $shift));
+            return bcdiv((string) $num, bcpow(2, (string) $shift));
         } else {
             throw new \ErrorException("Please install BCMATH");
         }
@@ -208,9 +208,9 @@ class bcmath_Utils
         $ix = 0;
         $ret = '';
 
-        for ($ix = 0; $ix < strlen($bx); $ix++) {
-            $xd = substr($bx, $ix, 1);
-            $yd = substr($by, $ix, 1);
+        for ($ix = 0; $ix < strlen((string) $bx); $ix++) {
+            $xd = substr((string) $bx, $ix, 1);
+            $yd = substr((string) $by, $ix, 1);
             $ret .= call_user_func($op, $xd, $yd);
         }
 
@@ -235,8 +235,8 @@ class bcmath_Utils
             if (!$digits)
                 $digits = self::digits($base);
             while ($dec > $base - 1) {
-                $rest = bcmod($dec, $base);
-                $dec = bcdiv($dec, $base);
+                $rest = bcmod((string) $dec, (string) $base);
+                $dec = bcdiv((string) $dec, (string) $base);
                 $value = $digits[$rest] . $value;
             }
             $value = $digits[intval($dec)] . $value;
@@ -252,14 +252,14 @@ class bcmath_Utils
                 die("Invalid Base: " . $base);
             bcscale(0);
             if ($base < 37)
-                $value = strtolower($value);
+                $value = strtolower((string) $value);
             if (!$digits)
                 $digits = self::digits($base);
-            $size = strlen($value);
+            $size = strlen((string) $value);
             $dec = "0";
             for ($loop = 0; $loop < $size; $loop++) {
-                $element = strpos($digits, $value[$loop]);
-                $power = bcpow($base, $size - $loop - 1);
+                $element = strpos((string) $digits, (string) $value[$loop]);
+                $power = bcpow((string) $base, $size - $loop - 1);
                 $dec = bcadd($dec, bcmul($element, $power));
             }
             return (string) $dec;
@@ -299,8 +299,8 @@ class bcmath_Utils
 
     public static function equalbinpad(&$x, &$y) {
 
-        $xlen = strlen($x);
-        $ylen = strlen($y);
+        $xlen = strlen((string) $x);
+        $ylen = strlen((string) $y);
 
         $length = max($xlen, $ylen);
         self::fixedbinpad($x, $length);
@@ -310,7 +310,7 @@ class bcmath_Utils
     public static function fixedbinpad(&$num, $length) {
 
         $pad = '';
-        for ($ii = 0; $ii < $length - strlen($num); $ii++) {
+        for ($ii = 0; $ii < $length - strlen((string) $num); $ii++) {
             $pad .= self::bc2bin('0');
         }
 

@@ -83,7 +83,7 @@ class Point {
                         return 0;
                 }
 
-                if (bccomp($p1->x, $p2->x) == 0 && bccomp($p1->y, $p2->y) == 0 && CurveFp::cmp($p1->curve, $p2->curve)) {
+                if (bccomp((string) $p1->x, (string) $p2->x) == 0 && bccomp((string) $p1->y, (string) $p2->y) == 0 && CurveFp::cmp($p1->curve, $p2->curve)) {
                     return 0;
                 } else {
                     return 1;
@@ -139,8 +139,8 @@ class Point {
             } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
 
                 if (CurveFp::cmp($p1->curve, $p2->curve) == 0) {
-                    if (bcmod(bccomp($p1->x, $p2->x), $p1->curve->getPrime()) == 0) {
-                        if (bcmod(bcadd($p1->y, $p2->y), $p1->curve->getPrime()) == 0) {
+                    if (bcmod(bccomp((string) $p1->x, (string) $p2->x), (string) $p1->curve->getPrime()) == 0) {
+                        if (bcmod(bcadd((string) $p1->y, (string) $p2->y), (string) $p1->curve->getPrime()) == 0) {
                             return self::$infinity;
                         } else {
                             return self::double($p1);
@@ -149,18 +149,18 @@ class Point {
 
                     $p = $p1->curve->getPrime();
 
-                    $l = bcmod(bcmul(bcsub($p2->y, $p1->y), NumberTheory::inverse_mod(bcsub($p2->x, $p1->x), $p)), $p);
+                    $l = bcmod(bcmul(bcsub((string) $p2->y, (string) $p1->y), (string) NumberTheory::inverse_mod(bcsub((string) $p2->x, (string) $p1->x), $p)), (string) $p);
 
 
-                    $x3 = bcmod(bcsub(bcsub(bcpow($l, 2), $p1->x), $p2->x), $p);
-                    $step0 = bcsub($p1->x, $x3);
+                    $x3 = bcmod(bcsub(bcsub(bcpow($l, 2), (string) $p1->x), (string) $p2->x), (string) $p);
+                    $step0 = bcsub((string) $p1->x, $x3);
                     $step1 = bcmul($l, $step0);
-                    $step2 = bcsub($step1, $p1->y);
-                    $step3 = bcmod($step2, $p);
+                    $step2 = bcsub($step1, (string) $p1->y);
+                    $step3 = bcmod($step2, (string) $p);
 
-                    $y3 = bcmod(bcsub(bcmul($l, bcsub($p1->x, $x3)), $p1->y), $p);
+                    $y3 = bcmod(bcsub(bcmul($l, bcsub((string) $p1->x, $x3)), (string) $p1->y), (string) $p);
                     if (bccomp(0, $y3) == 1)
-                        $y3 = bcadd($p, $y3);
+                        $y3 = bcadd((string) $p, $y3);
 
                     $p3 = new Point($p1->curve, $x3, $y3);
 
@@ -225,18 +225,18 @@ class Point {
 
                 if ($p1->order != null) {
 
-                    $e = bcmod($e, $p1->order);
+                    $e = bcmod((string) $e, (string) $p1->order);
                 }
 
-                if (bccomp($e, 0) == 0) {
+                if (bccomp((string) $e, 0) == 0) {
                     return self::$infinity;
                 }
 
-                if (bccomp($e, 0) == 1) {
-                    $e3 = bcmul(3, $e);
+                if (bccomp((string) $e, 0) == 1) {
+                    $e3 = bcmul(3, (string) $e);
 
-                    $negative_self = new Point($p1->curve, $p1->x, bcsub(0, $p1->y), $p1->order);
-                    $i = bcdiv(self::leftmost_bit($e3), 2);
+                    $negative_self = new Point($p1->curve, $p1->x, bcsub(0, (string) $p1->y), $p1->order);
+                    $i = bcdiv((string) self::leftmost_bit($e3), 2);
 
                     $result = $p1;
 
@@ -244,10 +244,10 @@ class Point {
                     while (bccomp($i, 1) == 1) {
                         $result = self::double($result);
 
-                        if (bccomp(bcmath_Utils::bcand($e3, $i), '0') != 0 && bccomp(bcmath_Utils::bcand($e, $i), '0') == 0) {
+                        if (bccomp((string) bcmath_Utils::bcand($e3, $i), '0') != 0 && bccomp((string) bcmath_Utils::bcand($e, $i), '0') == 0) {
                             $result = self::add($result, $p1);
                         }
-                        if (bccomp(bcmath_Utils::bcand($e3, $i), 0) == 0 && bccomp(bcmath_Utils::bcand($e, $i), 0) != 0) {
+                        if (bccomp((string) bcmath_Utils::bcand($e3, $i), 0) == 0 && bccomp((string) bcmath_Utils::bcand($e, $i), 0) != 0) {
                             $result = self::add($result, $negative_self);
                         }
 
@@ -270,9 +270,9 @@ class Point {
                     return gmp_strval(gmp_div($result, 2));
                 }
             } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
-                if (bccomp($x, 0) == 1) {
+                if (bccomp((string) $x, 0) == 1) {
                     $result = 1;
-                    while (bccomp($result, $x) == -1 || bccomp($result, $x) == 0) {
+                    while (bccomp($result, (string) $x) == -1 || bccomp($result, (string) $x) == 0) {
                         $result = bcmul(2, $result);
                     }
                     return bcdiv($result, 2);
@@ -321,19 +321,19 @@ class Point {
                 $p = $p1->curve->getPrime();
                 $a = $p1->curve->getA();
 
-                $inverse = NumberTheory::inverse_mod(bcmul(2, $p1->y), $p);
+                $inverse = NumberTheory::inverse_mod(bcmul(2, (string) $p1->y), $p);
 
 
-                $three_x2 = bcmul(3, bcpow($p1->x, 2));
+                $three_x2 = bcmul(3, bcpow((string) $p1->x, 2));
 
-                $l = bcmod(bcmul(bcadd($three_x2, $a), $inverse), $p);
+                $l = bcmod(bcmul(bcadd($three_x2, (string) $a), (string) $inverse), (string) $p);
 
-                $x3 = bcmod(bcsub(bcpow($l, 2), bcmul(2, $p1->x)), $p);
+                $x3 = bcmod(bcsub(bcpow($l, 2), bcmul(2, (string) $p1->x)), (string) $p);
 
-                $y3 = bcmod(bcsub(bcmul($l, bcsub($p1->x, $x3)), $p1->y), $p);
+                $y3 = bcmod(bcsub(bcmul($l, bcsub((string) $p1->x, $x3)), (string) $p1->y), (string) $p);
 
                 if (bccomp(0, $y3) == 1)
-                    $y3 = bcadd($p, $y3);
+                    $y3 = bcadd((string) $p, $y3);
 
                 $p3 = new Point($p1->curve, $x3, $y3);
 

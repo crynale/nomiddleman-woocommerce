@@ -45,7 +45,7 @@ class NumberTheory {
             if ($exponent < 0) {
                 return new \ErrorException("Negative exponents (" . $exponent . ") not allowed");
             } else {
-                $p = bcpowmod($base, $exponent, $modulus);
+                $p = bcpowmod((string) $base, (string) $exponent, (string) $modulus);
                 return $p;
             }
         } else {
@@ -79,7 +79,7 @@ class NumberTheory {
                         for ($i = 2; $i < count($polymod) + 1; $i++) {
 
 
-                            $poly[count($poly) - $i] = bcmod(bcsub($poly[count($poly) - $i], bcmul(end($poly), $polymod[count($polymod) - $i])), $p);
+                            $poly[count($poly) - $i] = bcmod(bcsub((string) $poly[count($poly) - $i], bcmul((string) end($poly), (string) $polymod[count($polymod) - $i])), (string) $p);
                             $poly = array_slice($poly, 0, count($poly) - 2);
                         }
                     }
@@ -114,7 +114,7 @@ class NumberTheory {
             for ($i = 0; $i < count($m1); $i++) {
                 for ($j = 0; $j < count($m2); $j++) {
                     $index = $i + $j;
-                    $prod[$index] = bcmod((bcadd($prod[$index], bcmul($m1[$i], $m2[$j]))), $p);
+                    $prod[$index] = bcmod((bcadd($prod[$index], bcmul((string) $m1[$i], (string) $m2[$j]))), (string) $p);
                 }
             }
 
@@ -192,7 +192,7 @@ class NumberTheory {
             return gmp_strval(gmp_jacobi($a, $n));
         } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
             if ($n >= 3 && $n % 2 == 1) {
-                $a = bcmod($a, $n);
+                $a = bcmod((string) $a, (string) $n);
 
                 if ($a == 0)
                     return 0;
@@ -207,17 +207,17 @@ class NumberTheory {
                     $e = bcadd($e, 1);
                 }
 
-                if (bcmod($e, 2) == 0 || bcmod($n, 8) == 1 || bcmod($n, 8) == 7)
+                if (bcmod($e, 2) == 0 || bcmod((string) $n, 8) == 1 || bcmod((string) $n, 8) == 7)
                     $s = 1;
                 else
                     $s = -1;
 
                 if ($a1 == 1)
                     return $s;
-                if (bcmod($n, 4) == 3 && bcmod($a1, 4) == 3)
+                if (bcmod((string) $n, 4) == 3 && bcmod($a1, 4) == 3)
                     $s = -$s;
 
-                return bcmul($s, self::jacobi(bcmod($n, $a1), $a1));
+                return bcmul($s, (string) self::jacobi(bcmod((string) $n, $a1), $a1));
             }
         } else {
             throw new \ErrorException("Please install BCMATH or GMP");
@@ -274,22 +274,22 @@ class NumberTheory {
                 if ($jac == -1)
                     throw new SquareRootException($a . " has no square root modulo " . $p);
 
-                if (bcmod($p, 4) == 3)
-                    return self::modular_exp($a, bcdiv(bcadd($p, 1), 4), $p);
+                if (bcmod((string) $p, 4) == 3)
+                    return self::modular_exp($a, bcdiv(bcadd((string) $p, 1), 4), $p);
 
-                if (bcmod($p, 8) == 5) {
-                    $d = self::modular_exp($a, bcdiv(bcsub($p, 1), 4), $p);
+                if (bcmod((string) $p, 8) == 5) {
+                    $d = self::modular_exp($a, bcdiv(bcsub((string) $p, 1), 4), $p);
                     if ($d == 1)
-                        return self::modular_exp($a, bcdiv(bcadd($p, 3), 8), $p);
+                        return self::modular_exp($a, bcdiv(bcadd((string) $p, 3), 8), $p);
                     if ($d == $p - 1)
-                        return (bcmod(bcmul(bcmul(2, $a), self::modular_exp(bcmul(4, $a), bcdiv(bcsub($p, 5), 8), $p)), $p));
+                        return (bcmod(bcmul(bcmul(2, (string) $a), (string) self::modular_exp(bcmul(4, (string) $a), bcdiv(bcsub((string) $p, 5), 8), $p)), (string) $p));
                     //shouldn't get here
                 }
 
                 for ($b = 2; $b < $p; $p++) {
-                    if (self::jacobi(bcmul($b, bcsub($b, bcmul(4, $a))), $p) == -1) {
+                    if (self::jacobi(bcmul($b, bcsub($b, bcmul(4, (string) $a))), $p) == -1) {
                         $f = array($a, -$b, 1);
-                        $ff = self::polynomial_exp_mod(array(0, 1), bcdiv(bcadd($p, 1), 2), $f, $p);
+                        $ff = self::polynomial_exp_mod(array(0, 1), bcdiv(bcadd((string) $p, 1), 2), $f, $p);
 
                         if ($ff[1] == 0)
                             return $ff[0];
@@ -308,12 +308,12 @@ class NumberTheory {
             $inverse = gmp_strval(gmp_invert($a, $m));
             return $inverse;
         } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
-            while (bccomp($a, 0) == -1) {
-                $a = bcadd($m, $a);
+            while (bccomp((string) $a, 0) == -1) {
+                $a = bcadd((string) $m, (string) $a);
             }
 
-            while (bccomp($m, $a) == -1) {
-                $a = bcmod($a, $m);
+            while (bccomp((string) $m, (string) $a) == -1) {
+                $a = bcmod((string) $a, (string) $m);
             }
 
             $c = $a;
@@ -323,11 +323,11 @@ class NumberTheory {
             $ud = 0;
             $vd = 1;
 
-            while (bccomp($c, 0) != 0) {
+            while (bccomp((string) $c, 0) != 0) {
                 $temp1 = $c;
-                $q = bcdiv($d, $c, 0);
+                $q = bcdiv((string) $d, (string) $c, 0);
 
-                $c = bcmod($d, $c);
+                $c = bcmod((string) $d, (string) $c);
                 $d = $temp1;
 
                 $temp2 = $uc;
@@ -340,11 +340,11 @@ class NumberTheory {
 
             $result = '';
 
-            if (bccomp($d, 1) == 0) {
+            if (bccomp((string) $d, 1) == 0) {
                 if (bccomp($ud, 0) == 1)
                     $result = $ud;
                 else
-                    $result = bcadd($ud, $m);
+                    $result = bcadd($ud, (string) $m);
             }else {
                 throw new \ErrorException("ERROR: $a and $m are NOT relatively prime.");
             }
@@ -367,7 +367,7 @@ class NumberTheory {
         } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
             while ($a) {
                 $temp = $a;
-                $a = bcmod($b, $a);
+                $a = bcmod((string) $b, (string) $a);
                 $b = $temp;
             }
 
@@ -398,10 +398,10 @@ class NumberTheory {
 
             return $lcm;
         } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
-            $ab = bcmul($a, $b);
+            $ab = bcmul((string) $a, (string) $b);
             $g = self::gcd2($a, $b);
 
-            $lcm = bcdiv($ab, $g);
+            $lcm = bcdiv($ab, (string) $g);
 
             return $lcm;
         } else {
@@ -576,9 +576,9 @@ class NumberTheory {
                 foreach ($ff as $f) {
                     $e = $f[1];
                     if ($e > 1) {
-                        $result = bcmul($result, bcmul(bcpow($f[0], bcsub($e, 1)), bcsub($f[0], 1)));
+                        $result = bcmul($result, bcmul(bcpow((string) $f[0], bcsub((string) $e, 1)), bcsub((string) $f[0], 1)));
                     } else {
-                        $result = bcmul($result, bcsub($f[0], 1));
+                        $result = bcmul($result, bcsub((string) $f[0], 1));
                     }
                 }
 
@@ -643,7 +643,7 @@ class NumberTheory {
             if ($p == 2 && $a > 2)
                 return 1 >> ($a - 2);
             else
-                return bcmul(($p - 1), bcpow($p, ($a - 1)));
+                return bcmul(($p - 1), bcpow((string) $p, ($a - 1)));
         } else {
             throw new \ErrorException("Please install BCMATH or GMP");
         }
@@ -674,7 +674,7 @@ class NumberTheory {
                 $result = 1;
 
                 while ($z != 1) {
-                    $z = bcmod(bcmul($z, $x), $m);
+                    $z = bcmod(bcmul((string) $z, (string) $x), (string) $m);
                     $result = bcadd($result, 1);
                 }
 
@@ -744,7 +744,7 @@ class NumberTheory {
             $t = 40;
 
             $k = 0;
-            $m = bcsub($n, 1);
+            $m = bcsub((string) $n, 1);
 
             while (bcmod($m, 2) == 0) {
                 $k = bcadd($k, 1);
@@ -754,15 +754,15 @@ class NumberTheory {
 
             for ($i = 0; $i < $t; $i++) {
 
-                $a = bcmath_Utils::bcrand(1, bcsub($n, 1));
+                $a = bcmath_Utils::bcrand(1, bcsub((string) $n, 1));
 
                 $b0 = self::modular_exp($a, $m, $n);
 
-                if ($b0 != 1 && $b0 != bcsub($n, 1)) {
+                if ($b0 != 1 && $b0 != bcsub((string) $n, 1)) {
 
                     $j = 1;
 
-                    while ($j <= $k - 1 && $b0 != bcsub($n, 1)) {
+                    while ($j <= $k - 1 && $b0 != bcsub((string) $n, 1)) {
 
                         $b0 = self::modular_exp($b0, 2, $n);
 
@@ -775,7 +775,7 @@ class NumberTheory {
                         $j++;
                     }
 
-                    if ($b0 != bcsub($n, 1)) {
+                    if ($b0 != bcsub((string) $n, 1)) {
 
                         self::$miller_rabin_test_count = $i + 1;
                         return false;
@@ -794,13 +794,13 @@ class NumberTheory {
             $result = gmp_strval(gmp_nextprime($starting_value));
             return $result;
         } else if (extension_loaded('bcmath') && USE_EXT=='BCMATH') {
-            if (bccomp($starting_value, 2) == -1)
+            if (bccomp((string) $starting_value, 2) == -1)
                 return 2;
 
 
-            $result = bcmath_Utils::bcor(bcadd($starting_value, 1), 1);
+            $result = bcmath_Utils::bcor(bcadd((string) $starting_value, 1), 1);
             while (!self::is_prime($result)) {
-                $result = bcadd($result, 2);
+                $result = bcadd((string) $result, 2);
             }
 
             return $result;

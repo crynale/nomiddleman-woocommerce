@@ -92,13 +92,13 @@ class gmp_Utils
             if ($base < 2 or $base > 256)
                 die("Invalid Base: " . $base);
             if ($base < 37)
-                $value = strtolower($value);
+                $value = strtolower((string) $value);
             if (!$digits)
                 $digits = self::digits($base);
-            $size = strlen($value);
+            $size = strlen((string) $value);
             $dec = "0";
             for ($loop = 0; $loop < $size; $loop++) {
-                $element = strpos($digits, $value[$loop]);
+                $element = strpos((string) $digits, (string) $value[$loop]);
                 $power = gmp_pow(gmp_init($base), $size - $loop - 1);
                 $dec = gmp_add($dec, gmp_mul($element, $power));
             }

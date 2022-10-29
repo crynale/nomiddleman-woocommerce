@@ -682,10 +682,10 @@ if ( !function_exists( 'hex2bin' ) )
     function hex2bin( $str )
     {
         $sbin = "";
-        $len = strlen( $str );
+        $len = strlen( (string) $str );
         for ( $i = 0; $i < $len; $i += 2 )
         {
-            $sbin .= pack( "H*", substr( $str, $i, 2 ) );
+            $sbin .= pack( "H*", substr( (string) $str, $i, 2 ) );
         }
 
         return $sbin;
@@ -704,10 +704,10 @@ if ( !defined('USE_EXT') )  {
 
 class HdHelper
 {
-    const BITCOIN_HEADER_PUB = "0488b21e";    
-    const BIP32_PRIME = 0x80000000;
-    const V1 = 1;
-    const V2 = 2;
+    final const BITCOIN_HEADER_PUB = "0488b21e";    
+    final const BIP32_PRIME = 0x80000000;
+    final const V1 = 1;
+    final const V2 = 2;
 
     public static function mpk_to_bc_address($cryptoId, $mpk, $index, $version, $is_for_change = false) {
         if ($version == self::V1) {
@@ -731,22 +731,22 @@ class HdHelper
         $gen = new Point($curve, $params['x'], $params['y'], $params['n']);
 
         if (USE_EXT == 'GMP') {
-            $x = gmp_Utils::gmp_hexdec('0x' . substr($mpk, 0, 64));
-            $y = gmp_Utils::gmp_hexdec('0x' . substr($mpk, 64, 64));
+            $x = gmp_Utils::gmp_hexdec('0x' . substr((string) $mpk, 0, 64));
+            $y = gmp_Utils::gmp_hexdec('0x' . substr((string) $mpk, 64, 64));
             $z = gmp_Utils::gmp_hexdec('0x' . hash('sha256', hash('sha256', $index . ':0:' . pack('H*', $mpk), TRUE)));
 
             $pt = Point::add(new Point($curve, $x, $y), Point::mul($z, $gen));
 
-            $keystr = "\x04" . str_pad(gmp_Utils::gmp_dec2base($pt->getX(), 256), 32, "\x0", STR_PAD_LEFT) . str_pad(gmp_Utils::gmp_dec2base($pt->getY(), 256), 32, "\x0", STR_PAD_LEFT);
+            $keystr = "\x04" . str_pad((string) gmp_Utils::gmp_dec2base($pt->getX(), 256), 32, "\x0", STR_PAD_LEFT) . str_pad((string) gmp_Utils::gmp_dec2base($pt->getY(), 256), 32, "\x0", STR_PAD_LEFT);
         }
         elseif (USE_EXT === 'BCMATH') {
-            $x = bcmath_Utils::bchexdec('0x' . substr($mpk, 0, 64));
-            $y = bcmath_Utils::bchexdec('0x' . substr($mpk, 64, 64));
+            $x = bcmath_Utils::bchexdec('0x' . substr((string) $mpk, 0, 64));
+            $y = bcmath_Utils::bchexdec('0x' . substr((string) $mpk, 64, 64));
             $z = bcmath_Utils::bchexdec('0x' . hash('sha256', hash('sha256', $index . ':0:' . pack('H*', $mpk), TRUE)));
 
             $pt = Point::add(new Point($curve, $x, $y), Point::mul($z, $gen));
 
-            $keystr = "\x04" . str_pad(bcmath_Utils::dec2base($pt->getX(), 256), 32, "\x0", STR_PAD_LEFT) . str_pad(bcmath_Utils::dec2base($pt->getY(), 256), 32, "\x0", STR_PAD_LEFT);
+            $keystr = "\x04" . str_pad((string) bcmath_Utils::dec2base($pt->getX(), 256), 32, "\x0", STR_PAD_LEFT) . str_pad((string) bcmath_Utils::dec2base($pt->getY(), 256), 32, "\x0", STR_PAD_LEFT);
         }
         else {
             throw new \ErrorException("Unknown math module");
@@ -766,7 +766,7 @@ class HdHelper
             list($key, $code) = self::ckd_mpk_check($key, $code, $n);
         }
 
-        return bin2hex($key);
+        return bin2hex((string) $key);
     }
 
     public static function ckd_mpk_check($key, $code, $n) {
@@ -792,12 +792,12 @@ class HdHelper
             throw new \ErrorException("Unknown math module");
         }
 
-        return self::ckd_mpk($key, $code, hex2bin(self::int_to_hex_pad($n, 4)));
+        return self::ckd_mpk($key, $code, hex2bin((string) self::int_to_hex_pad($n, 4)));
     }
 
     public static function ckd_mpk($key, $code, $n)
     {
-        $keystr = hash_hmac("sha512", $key . $n, $code, true);
+        $keystr = hash_hmac("sha512", $key . $n, (string) $code, true);
 
         $params = self::secp256k1_params();
         $curve = new CurveFp($params['p'], $params['a'], $params['b']);
@@ -842,7 +842,7 @@ class HdHelper
         }
         elseif (USE_EXT === 'BCMATH') {
             if ($compressed) {
-                if (bcmod($point->getY(), '2')) {
+                if (bcmod((string) $point->getY(), '2')) {
                     $key = '03' . self::int_to_hex_pad($point->getX(), 32);
                 }
                 else {
@@ -872,25 +872,25 @@ class HdHelper
             if ($key[0] === "\x04") {
                 return new Point(
                     $curve,
-                    gmp_Utils::gmp_base2dec(substr($key, 1, 32), 256),
-                    gmp_Utils::gmp_base2dec(substr($key, 33), 256),
+                    gmp_Utils::gmp_base2dec(substr((string) $key, 1, 32), 256),
+                    gmp_Utils::gmp_base2dec(substr((string) $key, 33), 256),
                     $order
                 );
             }
 
-            $Mx = gmp_Utils::gmp_base2dec(substr($key, 1), 256);
+            $Mx = gmp_Utils::gmp_base2dec(substr((string) $key, 1), 256);
         }
         elseif (USE_EXT === 'BCMATH') {
             if ($key[0] === "\x04") {
                 return new Point(
                     $curve,
-                    bcmath_Utils::base2dec(substr($key, 1, 32), 256),
-                    bcmath_Utils::base2dec(substr($key, 33), 256),
+                    bcmath_Utils::base2dec(substr((string) $key, 1, 32), 256),
+                    bcmath_Utils::base2dec(substr((string) $key, 33), 256),
                     $order
                 );
             }
 
-            $Mx = bcmath_Utils::base2dec(substr($key, 1), 256);
+            $Mx = bcmath_Utils::base2dec(substr((string) $key, 1), 256);
         }
         else {
             throw new \ErrorException("Unknown math module");
@@ -921,16 +921,16 @@ class HdHelper
         }
         elseif (USE_EXT === 'BCMATH') {
             for ($offset = 0; $offset < 128; ++$offset) {
-                $Mx = bcadd($x, strval($offset));
-                $My2 = bcadd(bcadd(bcpowmod($Mx, '3', $p), $a * bcpowmod($Mx, '2', $p)), bcmod($b, $p));
-                $My = bcpowmod($My2, bcdiv(bcadd($p, '1'), '4'), $p);
+                $Mx = bcadd((string) $x, strval($offset));
+                $My2 = bcadd(bcadd(bcpowmod($Mx, '3', (string) $p), $a * bcpowmod($Mx, '2', (string) $p)), bcmod((string) $b, (string) $p));
+                $My = bcpowmod($My2, bcdiv(bcadd((string) $p, '1'), '4'), (string) $p);
 
                 if ($curve->contains($Mx, $My)) {
                     if ($odd == bcmod($My, '2')) {
                         return $My;
                     }
 
-                    return bcsub($p, $My);
+                    return bcsub((string) $p, $My);
                 }
             }
         }
@@ -942,7 +942,7 @@ class HdHelper
     public static function deserialize_mpk($mpk) {
         $mpk = self::base58_decode_check($mpk);
         
-        if (strlen($mpk) != 78) {
+        if (strlen((string) $mpk) != 78) {
             throw new \ErrorException("Invalid MPK length for " . $mpk);
         }
 
@@ -950,19 +950,19 @@ class HdHelper
         //    throw new \ErrorException("Wrong MPK header: only public bitcoin MPK allowed");
         //}
 
-        $code = substr($mpk, 13, 32);
-        $key = substr($mpk, 45);
+        $code = substr((string) $mpk, 13, 32);
+        $key = substr((string) $mpk, 45);
 
         return array($code, $key);
     }
 
     public static function base58_decode_check($input) {
         $output = self::base58_decode($input);
-        $key = substr($output, 0, -4);
-        $csum = substr($output, -4);
+        $key = substr((string) $output, 0, -4);
+        $csum = substr((string) $output, -4);
 
         $hash = self::hash_hash($key);
-        $cs32 = substr($hash, 0, 4);
+        $cs32 = substr((string) $hash, 0, 4);
 
         if ($cs32 !== $csum) {
             return "";
@@ -978,15 +978,15 @@ class HdHelper
 
         $num = "0";
         if (USE_EXT === 'GMP') {
-            for ($i = strlen($input) - 1, $j = "1"; $i >= 0; $i--, $j = gmp_mul($j, $base)) {
-                $num = gmp_add($num, gmp_mul($j, strval(strpos($alphabet, $input[$i]))));
+            for ($i = strlen((string) $input) - 1, $j = "1"; $i >= 0; $i--, $j = gmp_mul($j, $base)) {
+                $num = gmp_add($num, gmp_mul($j, strval(strpos($alphabet, (string) $input[$i]))));
             }
 
             return gmp_Utils::gmp_dec2base(gmp_strval($num), 256);
         }
         elseif (USE_EXT === 'BCMATH') {
-            for ($i = strlen($input) - 1, $j = "1"; $i >= 0; $i--, $j = bcmul($j, $base)) {
-                $num = bcadd($num, bcmul($j, strval(strpos($alphabet, $input[$i]))));
+            for ($i = strlen((string) $input) - 1, $j = "1"; $i >= 0; $i--, $j = bcmul($j, $base)) {
+                $num = bcadd($num, bcmul($j, strval(strpos($alphabet, (string) $input[$i]))));
             }
 
             return bcmath_Utils::dec2base($num, 256);
@@ -1007,17 +1007,17 @@ class HdHelper
             throw new \ErrorException("Unknown math module");
         }
 
-        $hex = str_pad("", 2 * $pad - strlen($hex), '0') . $hex;
+        $hex = str_pad("", 2 * $pad - strlen((string) $hex), '0') . $hex;
 
         return $hex;
     }
 
     public static function hash_160($input) {
-        return hash("ripemd160", hash("sha256", $input, true), true);
+        return hash("ripemd160", hash("sha256", (string) $input, true), true);
     }
 
     public static function hash_hash($input) {
-        return hash("sha256", hash("sha256", $input, true), true);
+        return hash("sha256", hash("sha256", (string) $input, true), true);
     }
 
     public static function base58_encode($input) {
@@ -1037,8 +1037,8 @@ class HdHelper
         elseif (USE_EXT === 'BCMATH') {
             $num = bcmath_Utils::base2dec($input, 256);
             while (intval($num) >= $base) {
-                $div = bcdiv($num, $base);
-                $mod = bcmod($num, $base);
+                $div = bcdiv((string) $num, $base);
+                $mod = bcmod((string) $num, $base);
                 $encoded = $alphabet[intval($mod)] . $encoded;
                 $num = $div;
             }
@@ -1057,7 +1057,7 @@ class HdHelper
     }
 
     public static function pubkey_to_bc_address($pubkey, $cryptoId) {
-        return self::hash_160_to_bc_address(self::hash_160(hex2bin($pubkey)), $cryptoId, 'p2pkh');
+        return self::hash_160_to_bc_address(self::hash_160(hex2bin((string) $pubkey)), $cryptoId, 'p2pkh');
     }
 
     public static function hash_160_to_bc_address($h160, $cryptoId, $type) {
@@ -1112,7 +1112,7 @@ class HdHelper
 
         $vh160 = $addrtype . $h160;
         $h = self::hash_hash($vh160);
-        $addr = $vh160 . substr($h, 0, 4);
+        $addr = $vh160 . substr((string) $h, 0, 4);
 
         return self::base58_encode($addr);
     }
