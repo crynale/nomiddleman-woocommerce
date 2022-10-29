@@ -27,7 +27,7 @@ class NMM_Exchange {
                 throw new \Exception( 'Could not reach the currency conversion service. Please try again.' );
             }
 
-            $body = json_decode($response['body']);
+            $body = json_decode((string) $response['body']);
 
             $rate = $body->{'rates'}->{$fromCurr};
             //error_log('rate for ' . $fromCurr . ' is ' . $rate);
@@ -43,7 +43,7 @@ class NMM_Exchange {
             return $priceInUsd;
         }
 
-        $body = json_decode($response['body']);
+        $body = json_decode((string) $response['body']);
 
         $conversionRate = $body->{'results'}->{$fromCurr . '_USD'}->{'val'};      
 
@@ -80,7 +80,7 @@ class NMM_Exchange {
 
         NMM_Util::log(__FILE__, __LINE__, print_r($response, true));
 
-        $responseBody = json_decode( $response['body'] );
+        $responseBody = json_decode( (string) $response['body'] );
         
         $cryptocomparePrice = (float) $responseBody->{'USD'};
 
@@ -105,7 +105,7 @@ class NMM_Exchange {
             return 0;
         }
 
-        $responseBody = json_decode( $response['body']);
+        $responseBody = json_decode( (string) $response['body']);
         $hitbtcPrice = (float) $responseBody->{'last'};
 
         set_transient($transientKey, $hitbtcPrice, $updateInterval);
@@ -121,13 +121,13 @@ class NMM_Exchange {
             return $gateioPrice;
         }
 
-        $response = wp_remote_get('https://data.gateio.io/api2/1/ticker/' . strtolower($cryptoId) . '_usdt');
+        $response = wp_remote_get('https://data.gateio.io/api2/1/ticker/' . strtolower((string) $cryptoId) . '_usdt');
 
         if ( is_wp_error( $response ) || $response['response']['code'] !== 200) {
             return 0;
         }
 
-        $responseBody = json_decode( $response['body'] );
+        $responseBody = json_decode( (string) $response['body'] );
         $gateioPrice = (float) $responseBody->{'last'};
 
         set_transient($transientKey, $gateioPrice, $updateInterval);
@@ -150,7 +150,7 @@ class NMM_Exchange {
             return 0;
         }
 
-        $responseBody = json_decode( $response['body']);
+        $responseBody = json_decode( (string) $response['body']);
         $bittrexPrice = (float) $responseBody->{'result'}->{'Last'};
 
         set_transient($transientKey, $bittrexPrice, $updateInterval);
@@ -180,7 +180,7 @@ class NMM_Exchange {
             return 0;
         }
 
-        $responseBody = json_decode($response['body']);
+        $responseBody = json_decode((string) $response['body']);
 
         // average all trades fetched
         $totalTradeValue = 0;

@@ -108,7 +108,7 @@ class NMM_Settings {
 		$mpkKey = $cryptoId . '_hd_mpk';
 		if (is_array($this->settings)) {
 			if (array_key_exists($mpkKey, $this->settings)) {
-				return trim($this->settings[$mpkKey]);
+				return trim((string) $this->settings[$mpkKey]);
 			}
 		}
 		
@@ -123,7 +123,7 @@ class NMM_Settings {
 		$markupKey = $cryptoId . '_markup';
 		if (is_array($this->settings)) {
 			if (array_key_exists($markupKey, $this->settings)) {
-				return trim($this->settings[$markupKey]);
+				return trim((string) $this->settings[$markupKey]);
 			}
 		}
 

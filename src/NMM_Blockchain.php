@@ -23,7 +23,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceivedSatoshi = (float) json_decode($response['body']);
+		$totalReceivedSatoshi = (float) json_decode((string) $response['body']);
 		$result = array (
 			'result' => 'success',
 			'total_received' => $totalReceivedSatoshi / 100000000,
@@ -52,7 +52,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceivedSatoshi = (float) json_decode($response['body']);
+		$totalReceivedSatoshi = (float) json_decode((string) $response['body']);
 
 		$result = array (
 			'result' => 'success',
@@ -82,7 +82,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceivedSatoshi = (float) json_decode($response['body'])->data->confirmed_received_value;
+		$totalReceivedSatoshi = (float) json_decode((string) $response['body'])->data->confirmed_received_value;
 
 		$result = array (
 			'result' => 'success',
@@ -112,7 +112,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceivedMmltc = json_decode($response['body'])->total_received;
+		$totalReceivedMmltc = json_decode((string) $response['body'])->total_received;
 		$totalReceived = $totalReceivedMmltc / 100000000;
 
 		$result = array (
@@ -144,7 +144,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 		
-		$totalReceived = (float) json_decode($response['body'])->data->confirmed_received_value;		
+		$totalReceived = (float) json_decode((string) $response['body'])->data->confirmed_received_value;		
 
 		$result = array (
 			'result' => 'success',
@@ -175,7 +175,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 		
-		$totalReceived = (float) json_decode($response['body'])->totalReceived / 100000000;
+		$totalReceived = (float) json_decode((string) $response['body'])->totalReceived / 100000000;
 
 		$result = array (
 			'result' => 'success',
@@ -206,7 +206,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 		
-		$totalReceived = (float) json_decode($response['body']) / 100000000;
+		$totalReceived = (float) json_decode((string) $response['body']) / 100000000;
 
 		$result = array (
 			'result' => 'success',
@@ -237,7 +237,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 		
-		$totalReceived = (float) json_decode($response['body']) / 100000000;
+		$totalReceived = (float) json_decode((string) $response['body']) / 100000000;
 
 		$result = array (
 			'result' => 'success',
@@ -267,7 +267,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceivedSatoshi = (float) json_decode($response['body'])->data->confirmed_received_value;
+		$totalReceivedSatoshi = (float) json_decode((string) $response['body'])->data->confirmed_received_value;
 
 		$result = array (
 			'result' => 'success',
@@ -297,7 +297,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceived = (float) json_decode($response['body'])->balance;
+		$totalReceived = (float) json_decode((string) $response['body'])->balance;
 
 		$result = array (
 			'result' => 'success',
@@ -327,7 +327,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$totalReceived = (float) json_decode($response['body'])->balance;
+		$totalReceived = (float) json_decode((string) $response['body'])->balance;
 
 		$result = array (
 			'result' => 'success',
@@ -353,7 +353,7 @@ class NMM_Blockchain {
 			);
 			return $result;
 		}
-		$totalReceived = (float) json_decode($response['body'])->balance;
+		$totalReceived = (float) json_decode((string) $response['body'])->balance;
 		$result = array (
 			'result' => 'success',
 			'total_received' => $totalReceived,
@@ -377,7 +377,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->Right->caTxList;
 		if (!is_array($rawTransactions)) {
@@ -427,7 +427,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -492,7 +492,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		if (property_exists($body, 'error')) {
 			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . $body->error);
@@ -527,7 +527,7 @@ class NMM_Blockchain {
 					continue;
 				}
 
-				$rawTransaction = json_decode($response2['body']);
+				$rawTransaction = json_decode((string) $response2['body']);
 
 				$vouts = $rawTransaction->vout;
 
@@ -570,7 +570,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data;
 		if (!is_array($rawTransactions)) {
@@ -586,7 +586,7 @@ class NMM_Blockchain {
 				
 			$transactions[] = new NMM_Transaction($rawTransaction->value,
 												  10000,
-												  strtotime($rawTransaction->time),
+												  strtotime((string) $rawTransaction->time),
 												  $rawTransaction->transaction_hash);
 			
 		}
@@ -623,7 +623,7 @@ class NMM_Blockchain {
                 return $result;
             }
 
-            $body = json_decode($response2['body']);
+            $body = json_decode((string) $response2['body']);
 
             $rawTransactions = $body->txrefs;
             if (!is_array($rawTransactions)) {
@@ -652,7 +652,7 @@ class NMM_Blockchain {
             return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -702,7 +702,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$transactionIds = $body->transactions;
 		if (!is_array($transactionIds)) {
@@ -725,7 +725,7 @@ class NMM_Blockchain {
 					continue;
 				}
 
-				$rawTransaction = json_decode($response2['body']);
+				$rawTransaction = json_decode((string) $response2['body']);
 
 				$vouts = $rawTransaction->vout;
 
@@ -760,7 +760,7 @@ class NMM_Blockchain {
 			);
 			return $result;
 		}
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 		$transactionIds = $body->transactions;
 		if (!is_array($transactionIds)) {
 			$result = array(
@@ -777,7 +777,7 @@ class NMM_Blockchain {
 				if (is_wp_error($response2) || $response2['response']['code'] !== 200) {
 					continue;
 				}
-				$rawTransaction = json_decode($response2['body']);
+				$rawTransaction = json_decode((string) $response2['body']);
 				$vouts = $rawTransaction->vout;
 			foreach ($rawTransaction->vout as $vout) {
 				if ($vout->scriptPubKey->addresses[0] === $address) {
@@ -811,7 +811,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -859,7 +859,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -909,7 +909,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -959,7 +959,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data->txs;
 		if (!is_array($rawTransactions)) {
@@ -1006,7 +1006,7 @@ class NMM_Blockchain {
             return $result;
         }
 
-        $body = json_decode($response['body']);
+        $body = json_decode((string) $response['body']);
 
         $rawTransactions = $body->txs;
         if (!is_array($rawTransactions)) {
@@ -1045,7 +1045,7 @@ class NMM_Blockchain {
 
 		$response = wp_remote_get($request);
 
-		if (is_wp_error($response) || $response['response']['code'] !== 200 || json_decode($response['body'])->errno == 429) {
+		if (is_wp_error($response) || $response['response']['code'] !== 200 || json_decode((string) $response['body'])->errno == 429) {
 			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . print_r($response, true));
 
 			$result = array(
@@ -1056,7 +1056,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data->trace_list;
 		if (!is_array($rawTransactions)) {
@@ -1072,7 +1072,7 @@ class NMM_Blockchain {
 			if ($rawTransaction->receiver === $address) {
 				$transactions[] = new NMM_Transaction($rawTransaction->quantity * 10000,
 													  10000,
-													  strtotime($rawTransaction->timestamp),
+													  strtotime((string) $rawTransaction->timestamp),
 													  $rawTransaction->trx_id);
 			}
 			
@@ -1103,7 +1103,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->result;
 		if (!is_array($rawTransactions)) {
@@ -1119,7 +1119,7 @@ class NMM_Blockchain {
 
 		foreach ($rawTransactions as $rawTransaction) {
 			
-			if (strtolower($rawTransaction->to) === strtolower($address)) {
+			if (strtolower((string) $rawTransaction->to) === strtolower((string) $address)) {
 				
 				$transactions[] = new NMM_Transaction($rawTransaction->value, 
 													  $rawTransaction->confirmations, 
@@ -1153,7 +1153,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->result;
 
@@ -1169,7 +1169,7 @@ class NMM_Blockchain {
 		$transactions = array();
 		foreach ($rawTransactions as $rawTransaction) {
 			
-			if (strtolower($rawTransaction->to) === strtolower($address)) {
+			if (strtolower((string) $rawTransaction->to) === strtolower((string) $address)) {
 				
 				$transactions[] = new NMM_Transaction($rawTransaction->value, 
 													  $rawTransaction->confirmations, 
@@ -1203,7 +1203,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->txs;
 		if (!is_array($rawTransactions)) {
@@ -1253,7 +1253,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data;
 		if (!is_array($rawTransactions)) {
@@ -1301,7 +1301,7 @@ class NMM_Blockchain {
             return $result;
         }
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
         $rawTransactions = $body->txrefs;
         if (!is_array($rawTransactions)) {
@@ -1348,7 +1348,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		if (property_exists($body, 'error')) {
 			NMM_Util::log(__FILE__, __LINE__, 'FAILED API CALL ( ' . $request . ' ): ' . $body->error);
@@ -1383,7 +1383,7 @@ class NMM_Blockchain {
 					continue;
 				}
 
-				$rawTransaction = json_decode($response2['body']);
+				$rawTransaction = json_decode((string) $response2['body']);
 
 				$vouts = $rawTransaction->vout;
 
@@ -1426,7 +1426,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data;
 		if (!is_array($rawTransactions)) {
@@ -1474,7 +1474,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body[0];
 		if (!is_array($rawTransactions)) {
@@ -1520,7 +1520,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data;
 		if (!is_array($rawTransactions)) {
@@ -1564,7 +1564,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->_embedded->records;
 		if (!is_array($rawTransactions)) {
@@ -1583,7 +1583,7 @@ class NMM_Blockchain {
 				if ($rawTransaction->account === $address) {
 					$transactions[] = new NMM_Transaction($rawTransaction->starting_balance * 10000000,
 												  10000,
-												  strtotime($rawTransaction->created_at),
+												  strtotime((string) $rawTransaction->created_at),
 												  $rawTransaction->transaction_hash);
 				}
 			}
@@ -1591,7 +1591,7 @@ class NMM_Blockchain {
 				if ($rawTransaction->to === $address) {
 					$transactions[] = new NMM_Transaction($rawTransaction->amount * 10000000,
 												  10000, 
-												  strtotime($rawTransaction->created_at),
+												  strtotime((string) $rawTransaction->created_at),
 												  $rawTransaction->transaction_hash);
 				}
 			}
@@ -1622,7 +1622,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$transactionIds = $body->transactions;
 		if (!is_array($transactionIds)) {
@@ -1645,7 +1645,7 @@ class NMM_Blockchain {
 					continue;
 				}
 
-				$rawTransaction = json_decode($response2['body']);
+				$rawTransaction = json_decode((string) $response2['body']);
 
 				$vouts = $rawTransaction->vout;
 
@@ -1684,7 +1684,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->transactions;
 		if (!is_array($rawTransactions)) {
@@ -1701,7 +1701,7 @@ class NMM_Blockchain {
 				
 				$transactions[] = new NMM_Transaction($rawTransaction->tx->Amount,
 												  10000, 
-												  strtotime($rawTransaction->date),
+												  strtotime((string) $rawTransaction->date),
 												  $rawTransaction->hash);
 			}			
 		}
@@ -1731,7 +1731,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body;
 		if (!is_array($rawTransactions)) {
@@ -1749,8 +1749,8 @@ class NMM_Blockchain {
 				
 				$transactions[] = new NMM_Transaction($rawTransaction->diff,
 												  10000, 
-												  strtotime($rawTransaction->date->date),
-												  strtotime($rawTransaction->date->date));
+												  strtotime((string) $rawTransaction->date->date),
+												  strtotime((string) $rawTransaction->date->date));
 			}			
 		}
 
@@ -1779,7 +1779,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->data->txs;
 		if (!is_array($rawTransactions)) {
@@ -1824,7 +1824,7 @@ class NMM_Blockchain {
 			return $result;
 		}
 
-		$body = json_decode($response['body']);
+		$body = json_decode((string) $response['body']);
 
 		$rawTransactions = $body->result;
 		if (!is_array($rawTransactions)) {
@@ -1840,7 +1840,7 @@ class NMM_Blockchain {
 		foreach($rawTransactions as $rawTransaction) {
 			
 			
-			if (strtolower($rawTransaction->to) === strtolower($address) && $rawTransaction->tokenSymbol === $cryptoId) {
+			if (strtolower((string) $rawTransaction->to) === strtolower((string) $address) && $rawTransaction->tokenSymbol === $cryptoId) {
 
 				$transactions[] = new NMM_Transaction($rawTransaction->value,
 												  $rawTransaction->confirmations,

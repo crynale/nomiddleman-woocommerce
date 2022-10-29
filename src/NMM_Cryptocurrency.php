@@ -62,7 +62,7 @@ class NMM_Cryptocurrency {
     }
 
     public function is_erc20_token() {
-        return strlen($this->erc20contract) > 0;
+        return strlen((string) $this->erc20contract) > 0;
     }
 
     public function get_erc20_contract() {

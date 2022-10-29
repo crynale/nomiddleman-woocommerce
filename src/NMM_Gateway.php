@@ -23,7 +23,7 @@ class NMM_Gateway extends WC_Payment_Gateway {
         $this->init_settings();
 
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-        add_action('woocommerce_thankyou_' . $this->id, array($this, 'thank_you_page'));
+        add_action('woocommerce_thankyou_' . $this->id, $this->thank_you_page(...));
     }
 
     public function admin_options() {
@@ -262,7 +262,7 @@ class NMM_Gateway extends WC_Payment_Gateway {
             
 
             // Emails are fired once we update status to on-hold, so hook additional email details here
-            add_action('woocommerce_email_order_details', array( $this, 'additional_email_details' ), 10, 4);
+            add_action('woocommerce_email_order_details', $this->additional_email_details(...), 10, 4);
             
             $order->update_status('wc-on-hold', $orderNote);
 
@@ -336,7 +336,7 @@ class NMM_Gateway extends WC_Payment_Gateway {
     }
 
     private function get_qr_prefix($crypto) {
-        return strtolower(str_replace(' ', '', $crypto->get_name()));
+        return strtolower(str_replace(' ', '', (string) $crypto->get_name()));
     }
 
     private function get_qr_code($crypto, $walletAddress, $cryptoTotal, $orderId) {        

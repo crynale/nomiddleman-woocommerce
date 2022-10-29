@@ -3,9 +3,9 @@
 class NMM_Util {
 
 	public static function log($fileName, $lineNumber, $message) {
-		
+
 		// $logFileName = dirname(__DIR__) . '/' . NMM_LOGFILE_NAME;
-		
+
 		// if (file_exists($logFileName)) {
 		// 	$file = fopen($logFileName, 'r+');
 		// 	if ($file) {
@@ -46,7 +46,7 @@ class NMM_Util {
 	// credit: http://www.php.net/manual/en/function.mysql-real-escape-string.php#100854
 	private static function safe_string_escape($str)
 	{
-	   $len=strlen($str);
+	   $len=strlen((string) $str);
 	   $escapeCount=0;
 	   $targetString='';
 	   for ($offset=0; $offset<$len; $offset++)

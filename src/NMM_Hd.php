@@ -452,20 +452,20 @@ class NMM_Hd {
 	}
 
 	public static function is_valid_xpub($mpk) {
-		$mpkStart = substr($mpk, 0, 5);
-		$validMpk = strlen($mpk) == 111 && $mpkStart === 'xpub6';
+		$mpkStart = substr((string) $mpk, 0, 5);
+		$validMpk = strlen((string) $mpk) == 111 && $mpkStart === 'xpub6';
 		return $validMpk;
 	}
 
 	public static function is_valid_ypub($mpk) {
-		$mpkStart = substr($mpk, 0, 5);
-		$validMpk = strlen($mpk) == 111 && $mpkStart === 'ypub6';
+		$mpkStart = substr((string) $mpk, 0, 5);
+		$validMpk = strlen((string) $mpk) == 111 && $mpkStart === 'ypub6';
 		return $validMpk;
 	}
 
 	public static function is_valid_zpub($mpk) {
-		$mpkStart = substr($mpk, 0, 5);
-		$validMpk = strlen($mpk) == 111 && $mpkStart === 'zpub6';
+		$mpkStart = substr((string) $mpk, 0, 5);
+		$validMpk = strlen((string) $mpk) == 111 && $mpkStart === 'zpub6';
 		return $validMpk;
 	}
 

@@ -21,7 +21,7 @@ class NMM_Validation {
 				
 				foreach ($addresses as $ind => $address) {
 					if (NMM_Cryptocurrencies::is_valid_wallet_address($cryptoId, $address)) {
-                        $carouselAddresses[] = trim($address);
+                        $carouselAddresses[] = trim((string) $address);
                         $hasValidWalletAddress = true;
                     }                    
 				}
