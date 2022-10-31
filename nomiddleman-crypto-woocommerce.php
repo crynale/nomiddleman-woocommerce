@@ -40,7 +40,7 @@ function NMM_init_gateways(){
     define('NMM_PLUGIN_BASENAME', plugin_basename(NMM_PLUGIN_FILE));
 
     define('NMM_CRON_JOB_URL', plugins_url('', __FILE__) . '/src/NMM_Cron.php');
-    define('NMM_VERSION', '2.4.8');
+    define('NMM_VERSION', '2.4.9');
     
     define('NMM_REDUX_SLUG', 'nmmpro_options');
 
